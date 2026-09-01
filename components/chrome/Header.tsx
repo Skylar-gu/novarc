@@ -105,7 +105,7 @@ export function Header() {
           className="border-t border-border bg-ground md:hidden"
         >
           <nav
-            aria-label="Primary"
+            aria-label="Primary (mobile)"
             className="mx-auto flex w-full max-w-[80rem] flex-col px-6 py-2 sm:px-8"
           >
             {navItems.map((item) => (

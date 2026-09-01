@@ -29,7 +29,7 @@ export function Wordmark({ className, title = "NOVARC" }: WordmarkProps) {
       <text
         x="24"
         y="15"
-        fontFamily="var(--font-sans)"
+        style={{ fontFamily: "var(--font-sans)" }}
         fontSize="15.5"
         fontWeight={600}
         letterSpacing="1.6"

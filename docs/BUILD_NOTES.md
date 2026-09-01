@@ -74,3 +74,56 @@ npx create-next-app@latest novarc-scaffold \
   `bg-accent-soft`, `font-sans`, `font-serif`) or `var(--token)`. Accent words
   and pull quotes: use `<em>` / `<i>` / `<cite>` — globals.css already maps
   those to the serif italic.
+
+---
+
+## 2026-09-01 — Orchestrator, WP-1 gate (post-QA)
+
+QA pass on WP-1 returned CHANGES REQUIRED (one blocking) + nits. Resolved:
+
+1. **BLOCKING — verbatim live-site string.** `lib/site.ts` `title` was
+   "NOVARC — AI that augments, not replaces" — the live site's exact `<title>`.
+   Reworded to "NOVARC — AI that builds human capability". `description` also
+   restructured to drop the dash-bracketed "AI — models, agents, and tools —"
+   appositive that mirrored the live sentence.
+2. `Wordmark.tsx` — SVG `<text>` now uses `style={{ fontFamily }}` instead of a
+   bare `fontFamily` presentation attribute (reliable `var()` resolution).
+3. `Header.tsx` — mobile `<nav>` relabelled `"Primary (mobile)"` so the two nav
+   landmarks have unique accessible names (axe `landmark-unique`).
+4. `TopRibbon.tsx` — message `<p>` is now `sm:truncate` (wraps on narrow
+   screens) so the "Join the waitlist" link is never clipped at 375px.
+
+### Copy policy — the "augmentation, not replacement" phrase (DECISION)
+
+Tension: SPEC §1.2/§2.2 quote "AI that augments, not replaces." as the intended
+hero headline; BUILD_PLAN §0.1 forbids verbatim live-site strings.
+
+Ruling:
+- The **concept** ("augmentation over replacement", "augment, don't replace")
+  may appear in body copy as an idea — it is positioning, not protectable
+  expression, and near-unavoidable when describing this thesis.
+- The **verbatim marketing headline** "AI that augments, not replaces" is NOT
+  used as our page `<title>` or as the WP-3 hero headline.
+- **WP-3 hero headline (approved):** "AI that builds the person, not just the
+  answer." — accent (serif-italic `<em>`) on *person*. Sub-headline: original
+  wording carrying the models/agents/tools + "more capable each time you use it"
+  argument, no dash-appositive construction.
+- WP-4/5/6 may use the four-principle name "Augment, never replace" as a
+  labelled principle (it is a heading/label, and the ideas are not
+  protectable), but must reword all surrounding body copy.
+
+### Backlogged to WP-7 (non-blocking QA nits)
+
+- Route `Header` / `TopRibbon` width through `<Container width="wide">` so
+  chrome width stays coupled to the primitive (currently `max-w-[80rem]`
+  hardcoded in both).
+- Header lockup sub-line (`site.location`) is `hidden sm:inline` — consider
+  stacking it under the wordmark on mobile rather than dropping it.
+- `LinkButton` external variant needs an "opens in new tab" affordance
+  (visually-hidden text or `aria-describedby`) — matters for WP-6 study links.
+- `Footer` "Explore" label is a `<p>`; a visually-hidden `<h2>` would be more
+  conventional as the nav's programmatic label.
+- Decide whether to reserve vertical space for `TopRibbon` to avoid first-visit
+  CLS (server snapshot renders it closed).
+- Confirm intended deploy domain for `metadataBase` (`site.url` currently
+  points at the real `novarc.tech`).

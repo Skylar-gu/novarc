@@ -16,10 +16,10 @@ export const site = {
   identity:
     "An AI company with a single conviction: augmentation over replacement. Tools that leave the people using them more capable, not less.",
   /** Default document title and template. */
-  title: "NOVARC — AI that augments, not replaces",
+  title: "NOVARC — AI that builds human capability",
   titleTemplate: "%s · NOVARC",
   description:
-    "NOVARC builds AI — models, agents, and tools — meant to leave the people using them more capable, not less. The first instrument is in validation, launching 2026.",
+    "NOVARC builds models, agents, and tools designed to leave your reasoning stronger for having used them. The first instrument enters validation in 2026.",
 } as const;
 
 export interface NavItem {

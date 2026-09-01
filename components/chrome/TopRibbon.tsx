@@ -50,7 +50,7 @@ export function TopRibbon() {
   return (
     <div className="border-b border-border bg-surface text-text-muted">
       <div className="mx-auto flex w-full max-w-[80rem] items-center gap-3 px-6 py-2 text-xs sm:px-8">
-        <p className="min-w-0 flex-1 truncate">
+        <p className="min-w-0 flex-1 sm:truncate">
           <span>{waitlist.ribbon} </span>
           <Link
             href="/#waitlist"
