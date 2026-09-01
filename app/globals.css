@@ -1,0 +1,220 @@
+@import "tailwindcss";
+
+/* ============================================================================
+   NOVARC design tokens
+   ----------------------------------------------------------------------------
+   Light palette lives on bare :root (warm off-white ground #faf9f5).
+   Dark palette is defined explicitly, never by inversion, under BOTH:
+     - @media (prefers-color-scheme: dark) guarded by :root:not([data-theme="light"])
+     - :root[data-theme="dark"]
+   Components consume these only through Tailwind utilities (see @theme inline
+   below) or var(--token). No component hardcodes a colour or font family.
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+
+  /* Surfaces */
+  --ground: #faf9f5;          /* page background — warm off-white */
+  --surface: #f2f0e8;         /* recessed panels, table stripes */
+  --surface-raised: #ffffff;  /* cards lifted above the ground */
+
+  /* Text */
+  --text: #1b1a16;            /* primary text — warm near-black */
+  --text-muted: #5b574c;      /* secondary text, captions, eyebrows */
+
+  /* Lines */
+  --border: #e3ddcd;          /* hairlines, dividers, card edges */
+
+  /* Accent — a restrained steel blue; used sparingly for links and focus */
+  --accent: #35566b;
+  --accent-soft: #e8eef2;     /* wash behind accented elements */
+
+  /* Typography hooks.
+     The leading family is supplied by next/font (Inter / Newsreader) via the
+     --font-inter / --font-newsreader variables set on <html>. Documented
+     fallback stacks follow so text renders before the web fonts load and if
+     the network is unavailable. */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: var(--font-newsreader), ui-serif, Georgia, Cambria,
+    "Times New Roman", "Times", serif;
+}
+
+/* Dark — system preference, unless the user has explicitly chosen light */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --ground: #14130f;
+    --surface: #1c1b15;
+    --surface-raised: #24221b;
+
+    --text: #f1eee4;
+    --text-muted: #a7a294;
+
+    --border: #34322a;
+
+    --accent: #8fb3c8;
+    --accent-soft: #22303a;
+  }
+}
+
+/* Dark — explicit user choice; wins in both directions over the media query */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --ground: #14130f;
+  --surface: #1c1b15;
+  --surface-raised: #24221b;
+
+  --text: #f1eee4;
+  --text-muted: #a7a294;
+
+  --border: #34322a;
+
+  --accent: #8fb3c8;
+  --accent-soft: #22303a;
+}
+
+/* ---------------------------------------------------------------------------
+   Wire tokens into the Tailwind v4 theme. `inline` keeps the utilities
+   referencing var(--token) so a runtime theme switch re-cascades instantly.
+   Utilities produced: bg-ground / bg-surface / bg-surface-raised /
+   text-text / text-text-muted / border-border / bg-accent / text-accent /
+   bg-accent-soft, plus font-sans / font-serif.
+   --------------------------------------------------------------------------- */
+@theme inline {
+  --color-ground: var(--ground);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+}
+
+/* ---------------------------------------------------------------------------
+   Base element styling
+   --------------------------------------------------------------------------- */
+* {
+  border-color: var(--border);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--ground);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-synthesis-weight: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Accent words and pull quotes are set in the serif with its true italic. */
+em,
+i,
+cite {
+  font-family: var(--font-serif);
+  font-style: italic;
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+/* Keyboard focus. WP-7 owns the cross-cutting a11y pass; this is the floor. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Honour reduced-motion for every transition and animation on the site. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Prose — long-form text. The <Prose> primitive adds this class; all values
+   resolve from tokens so the component file stays token-free.
+   --------------------------------------------------------------------------- */
+.prose {
+  max-width: 65ch;
+  color: var(--text);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+}
+
+.prose > * + * {
+  margin-top: 1.15em;
+}
+
+.prose h2,
+.prose h3 {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  line-height: 1.25;
+  margin-top: 2em;
+}
+
+.prose h2 {
+  font-size: 1.5rem;
+}
+
+.prose h3 {
+  font-size: 1.25rem;
+}
+
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.prose strong {
+  font-weight: 600;
+}
+
+.prose blockquote {
+  border-left: 2px solid var(--border);
+  padding-left: 1.25rem;
+  color: var(--text-muted);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.25rem;
+  line-height: 1.5;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.5rem;
+}
+
+.prose li + li {
+  margin-top: 0.4em;
+}
+
+.prose ul {
+  list-style: disc;
+}
+
+.prose ol {
+  list-style: decimal;
+}
