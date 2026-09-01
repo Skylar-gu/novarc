@@ -35,3 +35,6 @@ yarn-error.log*
 # Scratch / scraped source (kept out of the tree; see docs/SPEC.md for the extraction)
 scratch/
 *.scraped.html
+
+# Local waitlist capture (WP-2; POST /api/waitlist appends here — not a real backend)
+data/

@@ -200,9 +200,10 @@ enter the tree. This is the only WP-1-lane file WP-2 touched.
   replaced by a `<p role="status">` with `waitlist.success`.
 - `HouseSection` takes either structured `lead` + `points: {title, body}[]` or
   free-form `children`.
-- `InterfacePreview` requires `variant: "desktop" | "mobile"`; all mock data is
-  baked in (Load 71%, Rigor 63%, Drift "holding", one receipt). No props for
-  the content.
+- `InterfacePreview` requires `variant: "desktop" | "mobile"` and takes an
+  optional `caption?: string` (a line rendered under the frame — use it to make
+  `/product`'s two previews read differently). Readout mock data is baked in
+  (Load 71%, Rigor 63%, Drift "holding", one Rigor receipt).
 - `ScrollReveal` props: `as?` (default `"div"`), `delay?` (ms), `children`,
   `className`. It is a client component; nesting many is fine.
 - `StudyCard` link text is fixed ("Read the primary source"); pass the real
@@ -281,3 +282,42 @@ no visible heading). New contract for WP-3–6:
   to add a `<noscript>` unhide or IO-less fallback).
 - Still open from WP-1 gate: chrome width through `Container`; `LinkButton`
   new-tab cue; `TopRibbon` first-paint CLS; confirm `metadataBase` domain.
+
+### 2026-09-01 — WP-2 builder, gate fixes applied
+
+All five items done, in-lane only (`components/blocks/**`,
+`app/%5Fkitchen-sink/**`). Nothing else touched.
+
+1. **Hero tokenizer** — added `coalescePunctuation()` after `tokenize()`. A
+   punctuation-only token (no letters/digits, tested with `/[\p{L}\p{N}]/u`) is
+   folded into the preceding word as a new `trailing` field, rendered upright
+   and *outside* the `<em>`, inside the same rising mask span. Verified against
+   `…the <em>person</em>, not just…` → `{text:"person",emphasis:true,
+   trailing:","}` and `…the <em>output</em>.` → `{…,trailing:"."}`; plain
+   strings unchanged. Rendered HTML now emits `<em>person</em>,` with no
+   gap-detached glyph.
+2. **Glosses / doc comment** — `InterfacePreview` Meters now use the approved
+   Load/Rigor glosses; `DriftRow` carries the approved Drift descriptor plus
+   the "Holding, against your 90-day baseline" state line; receipt figcaption
+   `text-[0.68rem]` → `text-xs`. Added `caption?: string` prop (line under the
+   frame, both variants) so `/product`'s two previews can differ.
+   `SignalCard` prop doc example updated to an approved gloss.
+3. **Kitchen-sink copy** — every flagged clause rewritten from the argument.
+   Self-ran a 6-gram overlap check (normalise → lowercase → strip non-alnum →
+   6-word windows) of the kitchen-sink page + `InterfacePreview` + `SignalCard`
+   against `scratch/novarc_*.txt`: **0 shared 6-word runs** after the rewrite
+   (first pass found 9; all reworded). Remaining 5-gram overlaps are all
+   permitted citation strings — the study title "Generative AI and Critical
+   Thinking", "Lee et al., CHI 2025", "Manu Kapur · ETH Zürich".
+4. **Heading order** — page title demoted to `<p>`; `Hero` sample moved above
+   the first `Section` so the single `<h1>` precedes every `<h2>`. `Group`
+   helper now renders via `Section title=`. Verified rendered order: one `h1`
+   (Hero) → `h2` per group → `h3` per card, no skips.
+5. **a11y** — `FAQ` `<summary>` text wrapped in `<h3>` (native toggle kept).
+   `WaitlistForm` focuses the success `<p role="status">` (`tabIndex={-1}`,
+   ref + `useEffect` on status) so keyboard focus is not lost when the form is
+   replaced.
+
+Build / lint / `tsc --noEmit` all clean. `/api/waitlist` re-verified
+(200 valid / 422 invalid / 200+no-write honeypot / 400 bad body). No
+`git add`/`commit`.
