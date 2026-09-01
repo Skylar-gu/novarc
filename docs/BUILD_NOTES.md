@@ -127,3 +127,157 @@ Ruling:
   CLS (server snapshot renders it closed).
 - Confirm intended deploy domain for `metadataBase` (`site.url` currently
   points at the real `novarc.tech`).
+
+---
+
+## 2026-09-01 — WP-2 (shared component library)
+
+### Files added (all in-lane)
+
+- `components/blocks/` — `Hero`, `PrincipleStatement`, `SignalCard`,
+  `PhaseCard`, `PrincipleGrid` + `PrincipleCard`, `StatCard`, `StudyCard`,
+  `FindingCard`, `InterfacePreview`, `FAQ` + `FAQItem`, `WaitlistForm`,
+  `HouseSection`, `ScrollReveal`, plus `shared.ts` (`formatIndex` helper).
+- `app/api/waitlist/route.ts` — `POST` handler; appends one JSON line to
+  `data/waitlist.jsonl` at repo root.
+- `app/%5Fkitchen-sink/page.tsx` — dev preview of every block, routed at
+  `/_kitchen-sink`. Has `metadata.robots = { index: false, follow: false }`;
+  not linked from nav/footer/sitemap. WP-7 still owns removing it from crawlable
+  surfaces (e.g. keeping it out of `sitemap.ts`).
+
+  **Folder-name note:** Next 16 treats a literal `_`-prefixed folder
+  (`app/_kitchen-sink/`) as a *private folder* and drops it from routing
+  entirely — the page 404s. The URL-encoded form `app/%5Fkitchen-sink/`
+  (`%5F` = `_`) is Next's sanctioned way to keep the literal `/_kitchen-sink`
+  URL, so the directory is named that way.
+
+### `.gitignore` edit (pre-authorised in the WP-2 brief)
+
+Appended `data/` (one entry, with a comment) so local waitlist captures never
+enter the tree. This is the only WP-1-lane file WP-2 touched.
+
+### Conventions / decisions
+
+1. **Keyframes for the Hero word-rise** live in a component-scoped `<style>`
+   tag inside `Hero.tsx` (can't add to `globals.css` from this lane). JS only
+   sets each word's `--w` index; the stagger is `animation-delay: calc(var(--w)
+   * 50ms)` in CSS. `Hero` stays a server component.
+2. **Reduced motion.** `Hero` — a `@media (prefers-reduced-motion: reduce)`
+   block in its scoped `<style>` sets `animation: none; transform: none` so the
+   words rest in final position. `ScrollReveal` — `motion-reduce:` utilities
+   (`motion-reduce:opacity-100 motion-reduce:translate-y-0
+   motion-reduce:transition-none`) force the visible, untransformed, no-transition
+   resting state regardless of the in-view state. `FAQ` chevron rotation is a
+   transition with `motion-reduce:transition-none`. globals.css's global
+   reduced-motion rule is a second backstop for all three.
+3. **`StudyCard` external link** implements the "opens in a new tab" cue WP-1's
+   `LinkButton` lacks: `target="_blank"` + `rel="noopener noreferrer"` + a
+   visible ` ↗` (`aria-hidden`) + a visually-hidden `(opens in a new tab)`.
+   `LinkButton` was left untouched.
+4. **`Hero.headline`** accepts `string | ReactNode`. A node tree is flattened to
+   words; words inside `<em>`/`<i>`/`<cite>` keep the serif-italic accent AND
+   animate as their own word, so the home hero can pass
+   `<>… <em>person</em> …</>` and still get the per-word rise.
+5. **No new dependencies.** No `lib/`, `components/ui/**`, `components/chrome/**`
+   or other out-of-lane edits. No cross-lane requests outstanding.
+
+### For the page builders (WP-3–6)
+
+- Import blocks from `@/components/blocks/<Name>`. `PrincipleGrid` +
+  `PrincipleCard` and `FAQ` + `FAQItem` are named exports from one file each
+  (`PrincipleGrid.tsx`, `FAQ.tsx`).
+- `Hero` renders the page `<h1>` and its own top/bottom padding
+  (`py-24 sm:py-32`); drop it inside a page, not inside `Section`.
+- Card blocks render an `<h3>` for their title. Wrap groups of them in a
+  `Section` (which carries the `<h2>` eyebrow) to keep heading order sane.
+- Card blocks do **not** impose their own grid — the page places them in a
+  grid/flex container. `PhaseCard`, `StatCard` use `h-full` so an equal-height
+  row works. `PrincipleGrid` is the exception: it brings its own 2-col grid.
+- `WaitlistForm` props: `variant?: "inline" | "block"` (default `"block"`),
+  `id?` (put `id="waitlist"` on the instance in the home closing section so the
+  chrome's `/#waitlist` anchors land — WP-1 asked WP-3 for this), `className?`
+  (max-width only; no other layout assumptions). On success the form element is
+  replaced by a `<p role="status">` with `waitlist.success`.
+- `HouseSection` takes either structured `lead` + `points: {title, body}[]` or
+  free-form `children`.
+- `InterfacePreview` requires `variant: "desktop" | "mobile"`; all mock data is
+  baked in (Load 71%, Rigor 63%, Drift "holding", one receipt). No props for
+  the content.
+- `ScrollReveal` props: `as?` (default `"div"`), `delay?` (ms), `children`,
+  `className`. It is a client component; nesting many is fine.
+- `StudyCard` link text is fixed ("Read the primary source"); pass the real
+  primary-source URL via `href` (see `externalLinks` in `lib/site.ts`).
+
+---
+
+## 2026-09-01 — Orchestrator, WP-2 gate (post-QA)
+
+QA pass on WP-2 returned CHANGES REQUIRED. Rulings + the WP-1-lane fix I made
+directly; the rest goes back to the WP-2 builder.
+
+### RULING — signal glosses are NOT reproducible vocabulary
+
+The one-line plain-language glosses on the live site
+("how much of the thinking was yours" / "how well you reasoned when you
+engaged" / "where your thinking is heading") are expressive phrasing, not terms
+of art. They must be **reworded everywhere** in shipped code and sample copy.
+The metric *names* (Load, Rigor, Drift) are fine — single functional words.
+Approved replacement glosses (use verbatim):
+- Load — "the share of the thinking you carried"
+- Rigor — "the quality of your reasoning where you engaged"
+- Drift — "the direction of your reasoning over time"
+`PRODUCT.md` / `SPEC.md` keep the original glosses as internal description of
+the real product; that is fine — those are design docs, not shipped code.
+
+### RULING — heading order contract (Section now supports it)
+
+I edited `components/ui/Section.tsx` (WP-1 lane) to add `title?: ReactNode`
+(rendered as `<h2>`) and `titleClassName?` (pass `"sr-only"` for sections with
+no visible heading). New contract for WP-3–6:
+- Exactly one `<h1>` per page = the single `Hero`. Never add a page-title
+  `<h1>`.
+- Every `Section` that contains `<h3>`-emitting card blocks MUST pass `title`
+  (visible, or `titleClassName="sr-only"` if the design shows none), so order
+  is h1 → h2 → h3 with no skip.
+- The earlier "wrap in Section and it carries the h2 eyebrow" guidance was
+  wrong — the eyebrow is a `<p>`. Superseded by the above.
+
+### Back to the WP-2 builder (in-lane fixes)
+
+1. **Hero tokenizer punctuation bug** (`Hero.tsx`) — punctuation after an
+   `<em>/<i>/<cite>` becomes a detached gap-separated token. The approved WP-3
+   headline ("…the *person*, not just the answer.") triggers it. Fix: coalesce
+   a punctuation-only token onto the preceding word (keep per-word rise + the
+   accent styling on the word itself).
+2. **Verbatim glosses** — apply the approved replacements in
+   `InterfacePreview.tsx` (:106, :111) and the `SignalCard.tsx` doc comment
+   (:12). InterfacePreview: also add a light content prop so `/product`'s two
+   required previews can differ (e.g. `caption?` / `context?`), and bump
+   `text-[0.68rem]` (:76) to `text-xs`.
+3. **Kitchen-sink verbatim/near-verbatim copy** (`app/%5Fkitchen-sink/
+   page.tsx`) — rewrite every clause QA flagged (lines ~60, 63, 85, 94, 103-04,
+   117, 134, 142, 150, 158, 162, 175, 195, 217, 253, 276) FROM THE ARGUMENT,
+   not by paraphrasing the source sentence. Keep only proper nouns / figures /
+   principle names / study titles.
+4. **Kitchen sink has two `<h1>`** — demote the page title (:45) to a `<p>`;
+   the `Hero` sample is the only `<h1>`. Update the local `Group` helper to use
+   the new `Section title=` prop so the kitchen sink dogfoods the real heading
+   contract.
+5. **Cheap a11y (in-lane, do now):** `FAQ.tsx` — wrap the `<summary>` question
+   in an `<h3>` (or `role="heading" aria-level={3}`) so SR heading nav reaches
+   the 8 questions on `/about`. `WaitlistForm.tsx` — on success move focus to
+   the `<p role="status">` (`tabIndex={-1}` + ref focus).
+
+### Backlogged to WP-7 (non-blocking)
+
+- Dedupe `formatIndex` (exists in both `Section.tsx` and
+  `components/blocks/shared.ts`, divergent edge behaviour).
+- Letter-spacing scale: blocks use 0.22 / 0.18 / 0.16 / 0.14em ad hoc — add a
+  small utility/token set or document the intended scale.
+- `/_kitchen-sink` must be excluded from the deployed build (env-gate or
+  route-group), not just kept out of `sitemap.ts`.
+- `ScrollReveal` leaves content `opacity-0` with JS disabled + normal motion —
+  don't wrap LCP/SEO-critical content solely in it (guidance for WP-3–6; WP-7
+  to add a `<noscript>` unhide or IO-less fallback).
+- Still open from WP-1 gate: chrome width through `Container`; `LinkButton`
+  new-tab cue; `TopRibbon` first-paint CLS; confirm `metadataBase` domain.
