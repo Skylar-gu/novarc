@@ -1,0 +1,91 @@
+{
+  "title": "Choosing a cache eviction policy",
+  "create_time": 1717000000.0,
+  "update_time": 1717000400.0,
+  "conversation_id": "fixture-conversation-0001",
+  "current_node": "node-a5",
+  "mapping": {
+    "node-root": {
+      "id": "node-root",
+      "message": null,
+      "parent": null,
+      "children": ["node-a1"]
+    },
+    "node-a1": {
+      "id": "node-a1",
+      "message": {
+        "id": "msg-a1",
+        "author": { "role": "system", "name": null, "metadata": {} },
+        "create_time": null,
+        "content": { "content_type": "text", "parts": [""] },
+        "metadata": { "is_visually_hidden_from_conversation": true }
+      },
+      "parent": "node-root",
+      "children": ["node-a2"]
+    },
+    "node-a2": {
+      "id": "node-a2",
+      "message": {
+        "id": "msg-a2",
+        "author": { "role": "user", "name": null, "metadata": {} },
+        "create_time": 1717000010.0,
+        "content": {
+          "content_type": "text",
+          "parts": [
+            "I need to pick an eviction policy for a read-through cache in front of the pricing service. My working assumption is that the access pattern is roughly Zipfian, so LFU should beat LRU. Is that assumption safe, or am I skipping a measurement I should take first?"
+          ]
+        }
+      },
+      "parent": "node-a1",
+      "children": ["node-a3"]
+    },
+    "node-a3": {
+      "id": "node-a3",
+      "message": {
+        "id": "msg-a3",
+        "author": { "role": "assistant", "name": null, "metadata": {} },
+        "create_time": 1717000020.0,
+        "content": {
+          "content_type": "text",
+          "parts": [
+            "The Zipfian assumption is testable before you commit. Pull a day of cache keys from the access log and plot request frequency by rank; if it is close to a straight line on a log-log plot, LFU is defensible. LFU also needs an aging term or it pins keys that were hot once and never cool down."
+          ]
+        }
+      },
+      "parent": "node-a2",
+      "children": ["node-a4"]
+    },
+    "node-a4": {
+      "id": "node-a4",
+      "message": {
+        "id": "msg-a4",
+        "author": { "role": "user", "name": null, "metadata": {} },
+        "create_time": 1717000030.0,
+        "content": {
+          "content_type": "text",
+          "parts": [
+            "Good catch on aging. The counterargument I keep coming back to: LRU is one line of code the whole team already understands, and the cache hit rate is already 94 percent. Chasing the last few points with LFU may not be worth the operational cost of a policy nobody can reason about at 3am."
+          ]
+        }
+      },
+      "parent": "node-a3",
+      "children": ["node-a5"]
+    },
+    "node-a5": {
+      "id": "node-a5",
+      "message": {
+        "id": "msg-a5",
+        "author": { "role": "assistant", "name": null, "metadata": {} },
+        "create_time": 1717000040.0,
+        "content": {
+          "content_type": "text",
+          "parts": [
+            "That is a reasonable place to stop. At a 94 percent hit rate the headroom is about six points, and only part of that is reachable by any policy change. Measure the frequency distribution so the decision is on record, then keep LRU unless the plot shows a distribution LRU handles badly."
+          ]
+        }
+      },
+      "parent": "node-a4",
+      "children": []
+    }
+  }
+}

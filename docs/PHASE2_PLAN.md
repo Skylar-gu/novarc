@@ -303,9 +303,9 @@ Builders validate with `npx tsc --noEmit` + `npm run lint` + `npm run test`
 | WP | Builder | QA verdict | Orchestrator | Commit |
 |----|---------|-----------|--------------|--------|
 | P2-1 | started by agent; core files landed; finished by orchestrator (fixtures, tests, rubric docs) after the agent's session ended mid-task | deferred to the Wave B integration review (P2-2/3/4 consume this contract directly) | reviewed every file; found + fixed paste-and-polish Load inflation (C1 now excludes pasted tokens; C4 excludes paste turns); 39 tests green | `e764f6b`+ this |
-| P2-2 | — | — | — | — |
-| P2-3 | — | — | — | — |
-| P2-4 | — | — | — | — |
+| P2-2 | done | wave gate: 1 blocking (nullable schema `type:[…]` form mangled by the SDK transform) + nits | fixed B1 → `anyOf` form + a regression test that runs the real transform; added a retry-feedback note | Wave B commit |
+| P2-3 | done | wave gate: pass; nit: a lone stray role-marker line flipped the whole plain-text parse | fixed: marker mode now requires a real two-sided labelled exchange (≥2 markers, both roles) | Wave B commit |
+| P2-4 | done | wave gate: pass, no blockers (record, drift math, `useSyncExternalStore` stability all verified) | — | Wave B commit |
 | P2-5 | — | — | — | — |
 | P2-6 | — | — | — | — |
 | P2-7 | — | — | — | — |

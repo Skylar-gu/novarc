@@ -1,0 +1,56 @@
+{
+  "uuid": "fixture-claude-0001",
+  "name": "Rate limiter placement",
+  "created_at": "2026-05-01T09:00:00.000000Z",
+  "updated_at": "2026-05-01T09:12:00.000000Z",
+  "chat_messages": [
+    {
+      "uuid": "m1",
+      "sender": "human",
+      "created_at": "2026-05-01T09:00:10.000000Z",
+      "text": "Where should the rate limiter live: at the edge proxy or in the API service itself? My instinct is the edge, so bad traffic never touches application capacity. What am I trading away by putting it there?",
+      "content": [
+        {
+          "type": "text",
+          "text": "Where should the rate limiter live: at the edge proxy or in the API service itself? My instinct is the edge, so bad traffic never touches application capacity. What am I trading away by putting it there?"
+        }
+      ]
+    },
+    {
+      "uuid": "m2",
+      "sender": "assistant",
+      "created_at": "2026-05-01T09:00:40.000000Z",
+      "text": "The edge is the right default for volumetric abuse. The trade is that the edge sees less: it does not know the authenticated principal, the per-tenant quota, or whether a request is idempotent. Anything that needs that context still has to be enforced in the service.",
+      "content": [
+        {
+          "type": "text",
+          "text": "The edge is the right default for volumetric abuse. The trade is that the edge sees less: it does not know the authenticated principal, the per-tenant quota, or whether a request is idempotent. Anything that needs that context still has to be enforced in the service."
+        }
+      ]
+    },
+    {
+      "uuid": "m3",
+      "sender": "human",
+      "created_at": "2026-05-01T09:01:20.000000Z",
+      "text": "So it is not either-or. Edge handles coarse IP and path limits; the service handles per-tenant and per-key quotas where it has the identity. I had been treating this as one decision when it is two layers with different jobs.",
+      "content": [
+        {
+          "type": "text",
+          "text": "So it is not either-or. Edge handles coarse IP and path limits; the service handles per-tenant and per-key quotas where it has the identity. I had been treating this as one decision when it is two layers with different jobs."
+        }
+      ]
+    },
+    {
+      "uuid": "m4",
+      "sender": "assistant",
+      "created_at": "2026-05-01T09:01:50.000000Z",
+      "text": "That split is the common one and it holds up. Keep the edge rules simple enough to reason about under load, and make the service limiter the place where tenant fairness and quota accounting live.",
+      "content": [
+        {
+          "type": "text",
+          "text": "That split is the common one and it holds up. Keep the edge rules simple enough to reason about under load, and make the service limiter the place where tenant fairness and quota accounting live."
+        }
+      ]
+    }
+  ]
+}
