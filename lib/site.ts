@@ -10,7 +10,12 @@ export const site = {
   descriptor: "Engineering intelligence",
   /** Header lockup sub-line and footer location line. */
   location: "Zürich · Founded 2026",
-  /** Base URL for metadata; not a live deployment. */
+  /**
+   * Base URL for metadata (`metadataBase`, canonical + OpenGraph URLs).
+   * TODO(WP-7): points at the live novarc.tech origin. Confirm the actual
+   * deploy domain before launch and update here if it differs — no domain is
+   * being invented in the meantime.
+   */
   url: "https://novarc.tech",
   /** One-sentence identity line used in the footer. Reworded, original. */
   identity:
@@ -20,6 +25,18 @@ export const site = {
   titleTemplate: "%s · NOVARC",
   description:
     "NOVARC builds models, agents, and tools designed to leave your reasoning stronger for having used them. The first instrument enters validation in 2026.",
+} as const;
+
+/**
+ * Structured OpenGraph / Twitter card image. Used by the root layout and every
+ * route's metadata so the dimensions and alt text stay attached to the URL.
+ * The path resolves against `site.url` via `metadataBase`.
+ */
+export const ogImage = {
+  url: "/og.png",
+  width: 1200,
+  height: 630,
+  alt: `${site.name} — ${site.descriptor}`,
 } as const;
 
 export interface NavItem {

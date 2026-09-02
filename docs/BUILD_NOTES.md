@@ -421,3 +421,206 @@ order, LinkedIn anchor, and both charts re-verified on prerendered HTML.
 - `RecallFailureChart` / `TrustEffortChart` appear on both `/` and `/research`;
   if the home versions should be visually lighter (smaller, no card border),
   add a `density`/`variant` prop rather than forking.
+
+---
+
+## 2026-09-02 — WP-7 (polish: metadata, crawl surface, 404, favicon, a11y)
+
+### A. Route metadata + OpenGraph
+
+- `lib/site.ts` — added a `TODO(WP-7)` on `url` (still the live `novarc.tech`
+  origin; confirm the real deploy domain before launch — no domain invented).
+  Added `site.ogImage = "/og.png"`.
+- `app/layout.tsx` — `openGraph.images` / `twitter.images` now point at
+  `site.ogImage` (resolved to absolute via the existing `metadataBase`). Comment
+  restating the domain TODO next to `metadataBase`.
+- `app/page.tsx`, `app/product/page.tsx`, `app/about/page.tsx`,
+  `app/research/page.tsx` — each `export const metadata` gained a full
+  `openGraph` block (`type: "website"`, `siteName`, `title`, `description`,
+  `url`, `images`) and a `twitter` block (`card: "summary_large_image"`, title,
+  description, image), plus `alternates.canonical`. Descriptions are the
+  existing per-page originals, one concern each, distinct. OG titles:
+  home uses `site.title`; others use `"<Page> · NOVARC"`.
+- Verified in the served HTML: per-page `og:title`/`og:description`/`og:url`/
+  `og:image` (absolute), `twitter:card summary_large_image`, `<link canonical>`.
+
+### A. OG image (static, no new dep)
+
+- `public/og.png` — 1200×630, hand-authored SVG rasterised with the
+  system `rsvg-convert` (librosvg; already installed — no npm dep, no
+  sharp/Satori, no `next/og` route needed). Austere typographic layout: the
+  three-bar mark, `NOVARC` wordmark, `ENGINEERING INTELLIGENCE`, and one
+  hedged original line ("Tools that leave their users more capable, not less.",
+  drawn from `site.identity`). Fonts resolve to DejaVu Sans/Serif via
+  fontconfig. Source SVG kept in the session scratchpad, not committed.
+- `public/` recreated; it now holds `og.png` (a real asset — no `.gitkeep`
+  needed).
+
+### B. Crawl / SEO surface
+
+- `app/sitemap.ts` — lists only `/`, `/product`, `/about`, `/research`
+  (absolute URLs off `site.url`). `/_kitchen-sink` and `/api/*` excluded.
+- `app/robots.ts` — `userAgent: "*"`, `allow: "/"`,
+  `disallow: ["/_kitchen-sink", "/api/"]`, `sitemap:
+  "${site.url}/sitemap.xml"`.
+- `app/_kitchen-sink` — real guard added: `if (process.env.NODE_ENV ===
+  "production") notFound();` at the top of the page component (keeps the
+  existing `robots: { index: false }`). In `npm run build` the route
+  prerenders with `"status": 404` (`.next/server/app/_kitchen-sink.meta`) and
+  `next start` serves it as the custom 404 body with a 404 code. Confirmed by
+  curl. Kept the route present-but-404 rather than deleting the file so the
+  block library preview still works in `npm run dev`.
+
+### C. `app/not-found.tsx`
+
+- New root 404, rendered inside the shared chrome automatically. One `<h1>`
+  ("That page is not here."), one short original paragraph (no exclamation), a
+  `LinkButton href="/"` ("Return home"). Eyebrow "404" in the section-eyebrow
+  style. `metadata` sets `title: "Page not found"` + `robots: noindex`.
+
+### D. Favicon / mark
+
+- `app/icon.svg` — hand-authored, three ascending bars matching
+  `components/chrome/Wordmark.tsx`. Embedded `<style>` switches fill between the
+  light `--text` (`#1b1a16`) and dark `--text` (`#f1eee4`) via
+  `@media (prefers-color-scheme: dark)` (SVG favicons honour this). Token
+  values, not arbitrary.
+- `app/favicon.ico` — replaced the `create-next-app` default (Next logo,
+  ~25 KB) with a 16/32/48/64 multi-resolution ICO built from `icon.svg` via
+  `rsvg-convert` + Pillow (`PIL`, already installed — no npm dep). ~1.8 KB.
+- `app/apple-icon.png` — 180×180, dark bars on the `#faf9f5` ground, same
+  rasterise path. Next emits `<link rel="apple-touch-icon" sizes="180x180">`.
+- Served `<link rel="icon">` (svg + ico) and `apple-touch-icon` confirmed by
+  curl.
+
+### E. Chrome + primitives cleanup
+
+- `components/ui/Container.tsx` — now spreads extra props
+  (`...rest` typed as `Omit<ComponentPropsWithoutRef<"div">, "children">`) onto
+  the rendered element, so landmarks routed through it keep their `aria-label`.
+- `components/chrome/Header.tsx` — sticky bar outer `div` and the mobile-menu
+  `<nav>` both routed through `<Container width="wide">` (the latter as
+  `as="nav"` with its `aria-label` passing through). Removed the two
+  hardcoded `max-w-[80rem]`.
+- `components/chrome/TopRibbon.tsx` — inner bar routed through
+  `<Container width="wide">`; hardcoded `max-w-[80rem]` removed.
+- `formatIndex` deduped — canonical is `components/blocks/shared.ts` (the
+  `Math.trunc(Math.abs())` guard). Deleted the local copy in
+  `components/ui/Section.tsx` (now imports from `shared`) and the third local
+  copy in `app/research/page.tsx` (also imports from `shared`). All existing
+  call sites unchanged in behaviour for their inputs; `tsc` + build clean.
+- `components/ui/Button.tsx` — `LinkButton` external branch (already
+  `target="_blank" rel="noopener noreferrer"`) now also appends a
+  visually-hidden `" (opens in a new tab)"` to the accessible name.
+  `StudyCard` already had its own equivalent treatment for the Research study
+  links, so those are unchanged.
+- `components/blocks/ScrollReveal.tsx` — added a stable `nv-reveal` marker
+  class. `app/layout.tsx` `<head>` now carries a `<noscript>` stylesheet
+  (`dangerouslySetInnerHTML`, so React never rehydrates it into a live
+  `<style>`) that forces `.nv-reveal { opacity: 1; transform: none }` when
+  scripting is disabled. Reduced-motion was already covered by the block's
+  `motion-reduce:*` utilities; this only closes the no-JS hole. Animation for
+  the common case is untouched (verified: `opacity-0` pre-reveal state still
+  present in served HTML).
+
+### F. a11y + motion + responsive sweep
+
+- **Heading order** (prerendered `.next/server/app/*.html`): `/` 1×h1 /
+  10×h2 / 13×h3; `/about` 1 / 6 / 11; `/product` 1 / 8 / 3; `/research`
+  1 / 6 / 5; `/_not-found` 1×h1. No skipped levels. `/_kitchen-sink` in the
+  prod build is the 404 page (1×h1, "That page is not here.").
+- **`prefers-reduced-motion`**: grepped every `transition*` / `animate*` /
+  `@keyframes`. All are `transition-colors` / `transition-transform` (covered
+  by the existing global `*` sweep in `globals.css`, which forces
+  `transition-duration`/`animation-duration` to `.01ms`), plus `Hero`'s scoped
+  `@media (prefers-reduced-motion: reduce)` off-switch, plus the
+  `motion-reduce:*` utilities on `ScrollReveal` and the `FAQ` chevron. Nothing
+  slips through — no `globals.css` change needed.
+- **`:focus-visible`**: reviewed the global floor
+  (`outline: 2px solid var(--accent); outline-offset: 2px`). The 2px offset
+  places the ring on the page ground (not on the control), so it clears both
+  the near-black primary button and either theme ground with adequate
+  contrast. Judged sufficient; left as-is.
+- **`#waitlist` offset**: `components/blocks/WaitlistForm.tsx` root (`<form>`
+  and the success `<p>`) now carries `scroll-mt-24`, matching the `Section`
+  value, so the hero `#waitlist` CTA doesn't land the form under the sticky
+  header.
+- **Responsive (code reasoning, 375 / 768 / 1024 / 1440)**: no horizontal
+  overflow. All non-`max-w` fixed widths are inside `overflow-x-auto` (the two
+  chart SVGs, `min-w-[520px]`/`[540px]`) or gated behind `sm:`
+  (`ValidationMethods` `sm:grid-cols-[13rem_1fr]`). `InterfacePreview` mobile is
+  `max-w-[19rem]` (fits 375). No tables anywhere. Header at 375 drops the
+  location line + inline CTA (`hidden sm:*`) to wordmark + toggle + hamburger.
+  `body` has no `overflow-x`.
+
+### G. Verify
+
+- `npx tsc --noEmit` — clean (exit 0).
+- `npm run lint` — clean (exit 0).
+- `npm run build` — clean; 11 app routes, `/_kitchen-sink` prerendered as
+  `status: 404`, `robots.txt` + `sitemap.xml` + `icon.svg` + `apple-icon.png`
+  emitted.
+- `next start` on :3123, curled: `/` `/product` `/about` `/research` → 200;
+  `/sitemap.xml` → 200 `application/xml` (4 URLs, no kitchen-sink);
+  `/robots.txt` → 200 `text/plain` (correct disallows + sitemap line);
+  `/favicon.ico` `/icon.svg` `/apple-icon.png` `/og.png` → 200 with the right
+  content types; `/_kitchen-sink` and a random path → 404 (custom not-found
+  body).
+
+### Deferred / out of scope
+
+- **Deploy domain** for `metadataBase` — left as the live `novarc.tech` with a
+  `TODO(WP-7)` in `lib/site.ts` + `app/layout.tsx`, per the brief (no domain
+  invented).
+- **No `app/opengraph-image.tsx`** — the static `public/og.png` (option A in
+  the brief) was producible with on-box tooling, so the `next/og` fallback was
+  not needed.
+- Backlog nits judged out of this package: reserving vertical space for
+  `TopRibbon` first-paint CLS; the ad-hoc letter-spacing scale
+  (0.22/0.18/0.16/0.14em); unifying the numbered-section motif across `/` and
+  `/product`; a `density` prop for the home vs. research chart instances;
+  stacking the header sub-line under the wordmark on mobile; the `Footer`
+  "Explore" `<p>` → visually-hidden `<h2>`. None are blockers.
+
+### 2026-09-02 — Orchestrator, WP-7 gate
+
+Independent QA review: **no blocking findings.** Build/lint/tsc clean; prod
+`/_kitchen-sink` → 404 (no library markup in HTML or RSC payload); `formatIndex`
+dedupe verified identical for every call site's inputs; per-route OG/twitter/
+canonical well-formed and descriptions original (0 n-gram hits vs. live meta);
+404 inside chrome with one `<h1>`; icon hex values match `--text` in both
+themes; chrome width refactor preserves the 80rem cap + gutters + nav
+`aria-label`; `ScrollReveal` no-JS content is visible; `#waitlist` `scroll-mt`
+correct; heading order clean on all routes; reduced-motion + focus-visible
+fully covered.
+
+**Nits fixed at the gate:**
+1. **noscript `ScrollReveal` backstop missed the transform.** Tailwind v4
+   compiles `translate-y-3` to the `translate:` property, not `transform:`, so
+   no-JS content was visible but shifted down ~12px. Added
+   `translate:none!important;scale:none!important` to the `<noscript>` `<style>`.
+2. **Per-route `openGraph` dropped the structured image metadata.** The four
+   routes replaced `openGraph.images` with a bare string, losing
+   `og:image:width/height/alt` + `og:locale` that `layout.tsx` defined.
+   Moved the structured `ogImage` object into `lib/site.ts`; every route + the
+   layout now import and use it. `og:image:width/height/alt` +
+   `twitter:image:*` verified present on all four routes.
+3. **404 emitted two `<meta name="robots">`** (Next auto-injects one for
+   `_not-found`). Dropped the explicit `robots` from `not-found.tsx` metadata —
+   now exactly one.
+4. **Trailing-slash mismatch:** `sitemap.xml` had `https://novarc.tech/` while
+   canonical/og:url are `https://novarc.tech`. `sitemap.ts` now emits the bare
+   origin for home.
+5. Reworded the `/about` meta description (pre-existing, unchanged by WP-7) to
+   drop a faint "NOVARC is an AI company with one conviction…" skeleton echo of
+   the live meta. 0 n-gram hits either way; done for cleanliness.
+
+**Not fixed (accepted):** prod `/_kitchen-sink`'s static 404 shell has an empty
+`<body>` in raw HTML (the not-found UI is in the RSC payload only) — cosmetic,
+on an internal URL that should never be hit; the security requirement (no
+component-library content served, HTTP 404) is fully met. Dynamic 404s render
+the full styled shell.
+
+Re-ran tsc / lint / build after the fixes — all clean. **Phase 1 complete:**
+faithful static replica of novarc.tech, original prose throughout, 4 pages +
+chrome + dataviz + full SEO/a11y surface.

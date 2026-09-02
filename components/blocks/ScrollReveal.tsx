@@ -21,6 +21,12 @@ export interface ScrollRevealProps {
  * Reduced motion: the `motion-reduce:*` utilities force the resting state
  * (fully opaque, no translate, no transition) regardless of the in-view state,
  * so the content is simply present with no animation.
+ *
+ * No JavaScript: the pre-reveal state is `opacity-0`, which would leave the
+ * content invisible if the reveal never runs. The `.nv-reveal` marker class
+ * pairs with a `<noscript>` stylesheet in `app/layout.tsx` that forces the
+ * resting state (opaque, untransformed) when scripting is disabled. That rule
+ * is inert when JS runs, so the animation is unaffected in the common case.
  */
 export function ScrollReveal({
   children,
@@ -36,7 +42,7 @@ export function ScrollReveal({
       ref={ref as Ref<HTMLElement>}
       style={delay ? { transitionDelay: `${delay}ms` } : undefined}
       className={cn(
-        "transition duration-700 ease-out will-change-transform",
+        "nv-reveal transition duration-700 ease-out will-change-transform",
         inView ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0",
         "motion-reduce:translate-y-0 motion-reduce:opacity-100 motion-reduce:transition-none",
         className,

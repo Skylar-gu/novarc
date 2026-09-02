@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { Container } from "@/components/ui/Container";
+import { formatIndex } from "@/components/blocks/shared";
 
 interface SectionProps {
   children: ReactNode;
@@ -29,10 +30,6 @@ interface SectionProps {
   className?: string;
   /** Extra classes for the inner Container. */
   innerClassName?: string;
-}
-
-function formatIndex(index: number): string {
-  return index.toString().padStart(2, "0");
 }
 
 /**

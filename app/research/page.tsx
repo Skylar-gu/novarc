@@ -6,12 +6,31 @@ import { FindingCard } from "@/components/blocks/FindingCard";
 import { WaitlistForm } from "@/components/blocks/WaitlistForm";
 import { RecallFailureChart } from "@/components/charts/RecallFailureChart";
 import { TrustEffortChart } from "@/components/charts/TrustEffortChart";
-import { externalLinks } from "@/lib/site";
+import { externalLinks, site, ogImage } from "@/lib/site";
+import { formatIndex } from "@/components/blocks/shared";
+
+const description =
+  "The evidence base for NOVARC's position: two anchor studies on AI and cognition, three results from cognitive science, and the standard we hold our own work to.";
+const ogTitle = `Research · ${site.name}`;
 
 export const metadata: Metadata = {
   title: "Research",
-  description:
-    "The evidence base for NOVARC's position: two anchor studies on AI and cognition, three results from cognitive science, and the standard we hold our own work to.",
+  description,
+  alternates: { canonical: "/research" },
+  openGraph: {
+    type: "website",
+    siteName: site.name,
+    title: ogTitle,
+    description,
+    url: `${site.url}/research`,
+    images: [ogImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: ogTitle,
+    description,
+    images: [ogImage],
+  },
 };
 
 const RESEARCH_AREAS: { term: string; gloss: string }[] = [
@@ -41,10 +60,6 @@ const RESEARCH_AREAS: { term: string; gloss: string }[] = [
       "Agents that take on the legwork and return the judgment calls, with enough context attached to make them.",
   },
 ];
-
-function formatIndex(index: number): string {
-  return index.toString().padStart(2, "0");
-}
 
 export default function ResearchPage() {
   return (

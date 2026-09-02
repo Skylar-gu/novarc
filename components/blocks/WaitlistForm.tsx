@@ -90,7 +90,7 @@ export function WaitlistForm({
         role="status"
         tabIndex={-1}
         className={cn(
-          "max-w-md text-sm leading-relaxed text-text outline-none",
+          "max-w-md scroll-mt-24 text-sm leading-relaxed text-text outline-none",
           className,
         )}
       >
@@ -114,7 +114,7 @@ export function WaitlistForm({
       id={id}
       onSubmit={handleSubmit}
       noValidate
-      className={cn("max-w-md", className)}
+      className={cn("max-w-md scroll-mt-24", className)}
     >
       <div
         className={cn(

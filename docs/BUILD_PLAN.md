@@ -175,4 +175,4 @@ If a WP needs something outside its lane: append a dated entry to `BUILD_NOTES.m
 | 4  | done | wave gate: pass after B1/B2 copy re-author | "receipt" label re-authored, hero/signals/standard re-drafted | WP-3–6 wave commit |
 | 5  | done | wave gate: pass after B1 copy re-author + LinkedIn wire | argument/house/FAQ re-drafted, `externalLinks.linkedin` wired | WP-3–6 wave commit |
 | 6  | done | wave gate: pass after B1 copy re-author | hero/FindingCards/research-areas re-drafted; charts verified vs. studies | WP-3–6 wave commit |
-| 7  | not started | — | — | — |
+| 7  | done | pass, no blockers; 4 nits fixed at gate (noscript transform, structured OG image, 404 robots dedupe, sitemap trailing slash) | gate applied | WP-7 commit |

@@ -4,12 +4,30 @@ import { Section } from "@/components/ui/Section";
 import { HouseSection } from "@/components/blocks/HouseSection";
 import { FAQ } from "@/components/blocks/FAQ";
 import { WaitlistForm } from "@/components/blocks/WaitlistForm";
-import { externalLinks } from "@/lib/site";
+import { externalLinks, site, ogImage } from "@/lib/site";
+
+const description =
+  "The company behind the instrument: its founding argument, why it is run as a single house rather than a set of startups, and answers to the questions that come up most.";
+const ogTitle = `About · ${site.name}`;
 
 export const metadata: Metadata = {
   title: "About",
-  description:
-    "NOVARC is a Zürich AI company built on a single idea: every system it ships should leave whoever uses it more capable. Its argument, its structure, and answers to common questions.",
+  description,
+  alternates: { canonical: "/about" },
+  openGraph: {
+    type: "website",
+    siteName: site.name,
+    title: ogTitle,
+    description,
+    url: `${site.url}/about`,
+    images: [ogImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: ogTitle,
+    description,
+    images: [ogImage],
+  },
 };
 
 const HERO_SUB =

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { Hero } from "@/components/blocks/Hero";
@@ -41,6 +42,12 @@ function Group({ title, children }: { title: string; children: ReactNode }) {
 }
 
 export default function KitchenSinkPage() {
+  // Dev-only surface. In a production build the route resolves to 404 so the
+  // component library preview never ships publicly.
+  if (process.env.NODE_ENV === "production") {
+    notFound();
+  }
+
   return (
     <div className="pb-24">
       <Container className="py-12">

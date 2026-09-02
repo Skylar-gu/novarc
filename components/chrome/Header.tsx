@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { navItems, site, waitlist } from "@/lib/site";
+import { Container } from "@/components/ui/Container";
 import { LinkButton } from "@/components/ui/Button";
 import { ThemeToggle } from "@/components/chrome/ThemeToggle";
 import { Wordmark } from "@/components/chrome/Wordmark";
@@ -29,7 +30,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-ground/85 backdrop-blur">
-      <div className="mx-auto flex w-full max-w-[80rem] items-center gap-4 px-6 py-3 sm:px-8">
+      <Container width="wide" className="flex items-center gap-4 py-3">
         <Link
           href="/"
           aria-label={`${site.name} — home`}
@@ -97,16 +98,18 @@ export function Header() {
             </svg>
           </button>
         </div>
-      </div>
+      </Container>
 
       {menuOpen && (
         <div
           id="mobile-menu"
           className="border-t border-border bg-ground md:hidden"
         >
-          <nav
+          <Container
+            as="nav"
+            width="wide"
             aria-label="Primary (mobile)"
-            className="mx-auto flex w-full max-w-[80rem] flex-col px-6 py-2 sm:px-8"
+            className="flex flex-col py-2"
           >
             {navItems.map((item) => (
               <Link
@@ -128,7 +131,7 @@ export function Header() {
             <LinkButton href="/#waitlist" size="sm" className="my-3 self-start">
               {waitlist.cta}
             </LinkButton>
-          </nav>
+          </Container>
         </div>
       )}
     </header>

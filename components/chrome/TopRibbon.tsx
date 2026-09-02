@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from "react";
 import Link from "next/link";
 import { storageKeys, waitlist } from "@/lib/site";
+import { Container } from "@/components/ui/Container";
 
 const RIBBON_EVENT = "novarc:ribbonchange";
 
@@ -49,7 +50,7 @@ export function TopRibbon() {
 
   return (
     <div className="border-b border-border bg-surface text-text-muted">
-      <div className="mx-auto flex w-full max-w-[80rem] items-center gap-3 px-6 py-2 text-xs sm:px-8">
+      <Container width="wide" className="flex items-center gap-3 py-2 text-xs">
         <p className="min-w-0 flex-1 sm:truncate">
           <span>{waitlist.ribbon} </span>
           <Link
@@ -78,7 +79,7 @@ export function TopRibbon() {
             <path d="M2 2l8 8M10 2l-8 8" />
           </svg>
         </button>
-      </div>
+      </Container>
     </div>
   );
 }

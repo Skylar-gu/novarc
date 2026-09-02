@@ -6,6 +6,7 @@ import { ScrollReveal } from "@/components/blocks/ScrollReveal";
 import { SignalCard } from "@/components/blocks/SignalCard";
 import { WaitlistForm } from "@/components/blocks/WaitlistForm";
 import { Section } from "@/components/ui/Section";
+import { site, ogImage } from "@/lib/site";
 import {
   CommitmentList,
   type Commitment,
@@ -15,10 +16,28 @@ import {
   type ValidationMethod,
 } from "@/components/product/ValidationMethods";
 
+const description =
+  "The first NOVARC instrument reads how you reason while working with AI — three signals, every score attached to the passages behind it. In testing now; it reaches people during 2026.";
+const ogTitle = `Product · ${site.name}`;
+
 export const metadata: Metadata = {
   title: "Product",
-  description:
-    "The first NOVARC instrument reads how you reason while working with AI — three signals, every score attached to the passages behind it. In testing now; it reaches people during 2026.",
+  description,
+  alternates: { canonical: "/product" },
+  openGraph: {
+    type: "website",
+    siteName: site.name,
+    title: ogTitle,
+    description,
+    url: `${site.url}/product`,
+    images: [ogImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: ogTitle,
+    description,
+    images: [ogImage],
+  },
 };
 
 const STANDARD: Commitment[] = [
