@@ -169,10 +169,10 @@ If a WP needs something outside its lane: append a dated entry to `BUILD_NOTES.m
 
 | WP | Builder | QA verdict | Orchestrator | Commit |
 |----|---------|-----------|--------------|--------|
-| 1  | pending | — | — | — |
-| 2  | — | — | — | — |
-| 3  | — | — | — | — |
-| 4  | — | — | — | — |
-| 5  | — | — | — | — |
-| 6  | — | — | — | — |
-| 7  | — | — | — | — |
+| 1  | done | pass after fixes (URL, verbatim `<title>`) | gate applied | `e097db7` + `4c6bf82` |
+| 2  | done | pass after fixes (Hero tokenizer, glosses, headings, kitchen-sink copy) | gate applied; `Section` gained `<h2>` `title` prop | `917ce52` + `0c89947` |
+| 3  | done | wave gate: pass after B1/B3 copy re-author | headings renamed, SignalCard/§4 copy re-drafted, charts wired | WP-3–6 wave commit |
+| 4  | done | wave gate: pass after B1/B2 copy re-author | "receipt" label re-authored, hero/signals/standard re-drafted | WP-3–6 wave commit |
+| 5  | done | wave gate: pass after B1 copy re-author + LinkedIn wire | argument/house/FAQ re-drafted, `externalLinks.linkedin` wired | WP-3–6 wave commit |
+| 6  | done | wave gate: pass after B1 copy re-author | hero/FindingCards/research-areas re-drafted; charts verified vs. studies | WP-3–6 wave commit |
+| 7  | not started | — | — | — |

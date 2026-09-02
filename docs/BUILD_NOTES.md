@@ -321,3 +321,103 @@ All five items done, in-lane only (`components/blocks/**`,
 Build / lint / `tsc --noEmit` all clean. `/api/waitlist` re-verified
 (200 valid / 422 invalid / 200+no-write honeypot / 400 bad body). No
 `git add`/`commit`.
+
+### 2026-09-02 — Orchestrator, WP-3–6 wave gate
+
+Four page-builders (WP-3 Home, WP-4 Product, WP-5 About, WP-6 Research +
+`components/charts/`) merged into the working tree. Gate over the whole delta.
+
+**Automated checks (orchestrator):** `tsc --noEmit`, `npm run lint`,
+`npm run build` all clean; 7 routes prerender (`/`, `/about`, `/product`,
+`/research`, `/_kitchen-sink` noindex, `/_not-found`, `/api/waitlist` dynamic).
+Heading order checked on prerendered HTML — exactly one `<h1>` per page, no
+skipped levels anywhere. `/api/waitlist` round-trips. Independent 5/6/7-gram
+sweep of visible strings vs. `scratch/novarc_*.txt`.
+
+**QA agent (fresh; the pre-compaction persistent QA context was unrecoverable):**
+independent read of all in-scope files + own n-gram sweep + rendered-HTML
+heading/anchor/chart-ARIA checks + build. Verdict: build/heading/chart/voice/
+token/a11y/metadata all PASS. One systemic BLOCKING finding + a verbatim label
++ reused headings.
+
+**Rulings & fixes applied (orchestrator, this gate):**
+
+1. **B1 — near-verbatim paraphrase (systemic).** ~15 lines across all four
+   pages kept the live site's sentence skeleton and swapped vocabulary — which
+   BUILD_PLAN §0.1 bans ("re-authored from the argument, not paraphrased from a
+   source sentence"). My own 6-gram check missed all of it (synonym swaps break
+   n-grams); the QA eyeball pass caught it. **Ruling: re-draft each from the
+   underlying claim** so clause order and cadence differ, not just the words.
+   Done — research hero/sub/intro/standard/3× FindingCard/5× research-area
+   gloss; home §4/§6 heading/3× SignalCard body/PhaseCard Instruments/
+   "Make reasoning visible" body; product hero/"what it is"/3× SignalCard body/
+   STANDARD[0]/intervene section; about HERO_SUB/ARG_PARAS/ARG_RULE/HOUSE_LEAD/
+   HOUSE_POINTS bodies/OUT_INTRO/FAQ Q3,Q5,Q7.
+2. **B2 — verbatim live string "No score without a receipt".** Not on the §0.1
+   carve-out. **Ruling: re-author.** Label → "Every score opens to its
+   evidence"; `CommitmentList` doc-comment example updated to match.
+3. **B3 — section headings reproducing/rearranging live headings.** Renamed:
+   "Where this goes" → "What comes after measurement"; "The house" → "Kept under
+   one roof"; "Convenience has a measurable cost" → "The trade shows up in the
+   data"; "Three signals" → "What it reads: Load, Rigor, Drift"; product "It
+   reports what is true…" → "An honest reading, including the unflattering
+   parts"; "It measures, then it intervenes" → "From a reading to a single
+   prompt"; research "Five areas. One test." → "One question across five areas".
+4. **NIT — status-label reuse.** Eyebrow "Launching 2026" (live recurring
+   eyebrow) → "Arriving 2026" on home + product; product hero eyebrow "The
+   first instrument · 2026" → "First NOVARC instrument · 2026".
+5. **NIT — softer near-verbatim.** Reworked the recurring "with the system
+   taken away, is the person more able/less" motif per instance; the Load/Rigor
+   enumerations turned from source-mirroring colon-lists into prose; "strengthen/
+   hold/erode" triplet replaced; "a faculty that goes unexercised… fades",
+   Q3 "one thread… not its boundary", Q5 revenue/research pairing, "it has a
+   name — cognitive outsourcing" reveal, "each held to the same", "NOVARC is an
+   AI company", "the first instrument is in", "the people who use it" all
+   restructured (5-gram sweep drove the last four).
+6. **NIT — About FAQ Q7 dropped the LinkedIn reference SPEC §2.3 wants.** Q7
+   answer converted to a node with a real `externalLinks.linkedin` anchor
+   (`FaqEntry.a` is `ReactNode`; `FAQ` renders it directly). `externalLinks.
+   linkedin` was defined but previously unused — now wired.
+7. **NIT — RecallFailureChart y-axis read exact while bars are approximate.**
+   Added an "approx." annotation above the axis (bar labels already carry "~",
+   caption + `<desc>` already say direction-not-rates).
+8. **`/_kitchen-sink` (dev-only, noindex):** HouseSection sample copy updated to
+   match the re-authored house labels; sample lead reworded off "not a
+   portfolio/spread of separate startups".
+9. **`HouseSection.tsx`:** doc-comment examples updated ("One entity" / "Many
+   builds" → "A single company" / "A sequence of products").
+
+**Charts wired in.** WP-6 shipped `RecallFailureChart` / `TrustEffortChart`;
+the live home "cost of convenience" section carries both. Replaced WP-3's two
+`ChartSlot` placeholders with the real charts and deleted `components/home/
+ChartSlot.tsx` (now dead). Both confirmed rendering on `/` and `/research`.
+
+**Deliberate SPEC deviations (accepted, logged):**
+- **About FAQ item 8.** SPEC §2.3 lists item 8 as the "Built in Zürich" close.
+  Builder moved that to its own section ("Zürich-based, not Zürich-bound.") and
+  made FAQ #8 a substantive question ("Against what is augmentation actually
+  measured?"). All 8 SPEC topics still appear on the page. Kept — reads better
+  as a section than as an accordion row.
+- **Research "evidence is converging" beat** rendered as an unheaded lead
+  paragraph (no `<h2>`), not a titled section. Content present; leaving it
+  unheaded also sidesteps a verbatim-heading risk. Kept.
+- **Numbered-section motif** (`Section index=`) is on `/about` and `/research`
+  only; `/product` and `/` use word eyebrows without numbers. Consistent with
+  Home. WP-7 may unify — not a blocker.
+
+**Residual n-gram hits (all sanctioned):** the paper title "Your Brain on
+ChatGPT" + "MIT Media Lab" + year; "Lee et al. · CHI 2025"; "Manu Kapur · ETH
+Zürich"; the canonical outcome name "increase the rate of original discovery".
+All are attributions or canonical labels — §0.1 carve-out.
+
+Re-ran `tsc --noEmit` / `lint` / `build` after every fix — all clean. Heading
+order, LinkedIn anchor, and both charts re-verified on prerendered HTML.
+
+### WP-7 backlog additions (from this gate)
+- Confirm `#waitlist` scroll offset — the home `WaitlistForm` element has no
+  `scroll-mt` and sits under a sticky-ish header; check the hero CTA lands it
+  correctly.
+- Consider unifying the numbered-section motif across `/product` and `/`.
+- `RecallFailureChart` / `TrustEffortChart` appear on both `/` and `/research`;
+  if the home versions should be visually lighter (smaller, no card border),
+  add a `density`/`variant` prop rather than forking.

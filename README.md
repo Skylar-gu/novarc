@@ -34,7 +34,10 @@ Drift**.
 
 - [x] `git init`
 - [x] Spec + vision drafted
-- [ ] Site scaffold (Next.js, matching novarc.tech stack)
+- [x] Site scaffold (Next.js, design system, theme, page chrome) — WP-1
+- [x] Shared component library + waitlist API — WP-2
+- [x] All four pages built (Home, Product, About, Research) + dataviz — WP-3–6
+- [ ] Polish pass (metadata, sitemap/robots, 404, favicon, a11y sweep) — WP-7
 - [ ] Instrument prototype (scoring engine + evidence receipts)
 - [ ] Validation harness
 

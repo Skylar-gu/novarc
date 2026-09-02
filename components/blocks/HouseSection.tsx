@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
 export interface HousePoint {
-  /** Short heading, e.g. "One entity". */
+  /** Short heading, e.g. "A single company". */
   title: string;
   /** One or two sentences. */
   body: ReactNode;
@@ -12,8 +12,8 @@ export interface HouseSectionProps {
   /** Optional lead statement above the three points. */
   lead?: ReactNode;
   /**
-   * The sub-points ("One entity" / "Many builds" / "Compounding"). Rendered in
-   * an equal-width row. Ignored when `children` is provided.
+   * The sub-points (single company / sequence of products / compounding gains).
+   * Rendered in an equal-width row. Ignored when `children` is provided.
    */
   points?: HousePoint[];
   /** Custom content, used instead of `lead` + `points`. */

@@ -291,19 +291,19 @@ export default function KitchenSinkPage() {
 
       <Group title="HouseSection">
         <HouseSection
-          lead="One company holding many builds over the years — on purpose, not a spread of separate startups."
+          lead="A single company holding a run of products over the years — kept whole on purpose, not carved up into separate startups."
           points={[
             {
-              title: "One entity",
+              title: "A single company",
               body: "Anything worth building gets built here, under a single name and a single bar for what ships.",
             },
             {
-              title: "Many builds",
+              title: "A sequence of products",
               body: "The one being validated now is the first of them. Models and agents are meant to follow, judged the same way.",
             },
             {
-              title: "Compounding",
-              body: "Evidence, skill, and credibility gather in one place, so each build starts further along than a fresh company would.",
+              title: "Gains that carry forward",
+              body: "Evidence, skill, and credibility gather in one place, so each new product starts further along than a fresh company would.",
             },
           ]}
         />
