@@ -1,0 +1,37 @@
+[
+  {
+    "role": "user",
+    "text": "I'm deciding whether to move our session store from Postgres to Redis. The problem is p99 latency on the auth path spiked to 400ms last week and the session lookup is the biggest single item in the trace. My assumption going in is that the row lock on the sessions table during refresh is the cause. Does that hold up, and is Redis the right fix or am I skipping a step?",
+    "index": 0
+  },
+  {
+    "role": "assistant",
+    "text": "Row locks on refresh are plausible, but before switching stores it is worth confirming the mechanism. A few things could produce the same symptom: lock contention, an unindexed lookup under load, connection-pool saturation, or autovacuum falling behind on a hot table. Redis removes the lock problem but introduces durability and failover questions for session data.",
+    "index": 1
+  },
+  {
+    "role": "user",
+    "text": "Good, so I should not assume it is the lock. What would actually tell me it is contention rather than pool saturation? I want a test I can run against the current system, not a rewrite.",
+    "index": 2
+  },
+  {
+    "role": "assistant",
+    "text": "Check pg_stat_activity for wait_event_type = 'Lock' during the spike, and compare against pool checkout wait time from your client metrics. If lock waits track the latency and pool waits do not, contention is the cause. If both rise together, the pool is the bottleneck and Redis will not help much.",
+    "index": 3
+  },
+  {
+    "role": "user",
+    "text": "The counterargument to Redis I keep coming back to: if the real issue is pool saturation, moving reads off Postgres helps by accident, but I have not fixed the thing that will bite me again on the next hot table. On the other hand, session reads are genuinely a poor fit for a relational store and getting them out is defensible on its own terms.",
+    "index": 4
+  },
+  {
+    "role": "assistant",
+    "text": "That is a fair way to hold both. The clean sequence is: instrument first, confirm the mechanism, then decide. If it is contention specific to the refresh write pattern, a targeted fix (shorter transaction, SKIP LOCKED, or moving just the refresh) may be enough. If session access is broadly the wrong shape for Postgres, the migration stands regardless of this incident.",
+    "index": 5
+  },
+  {
+    "role": "user",
+    "text": "Fair point, I'll revise my plan. I was treating the incident as the reason to migrate. I'll run the pg_stat_activity check tonight and separate the two decisions: the incident fix is whatever the trace says, and the store migration goes through its own review with capacity and failover as the criteria, not this week's latency.",
+    "index": 6
+  }
+]

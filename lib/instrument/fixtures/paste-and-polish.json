@@ -1,0 +1,37 @@
+[
+  {
+    "role": "user",
+    "text": "Write me a short paragraph explaining why our team is moving to trunk-based development, for the internal wiki.",
+    "index": 0
+  },
+  {
+    "role": "assistant",
+    "text": "Trunk-based development keeps every engineer working against a single shared branch, with short-lived feature branches merged at least daily. It reduces the integration pain that builds up when long-lived branches diverge, makes continuous integration meaningful rather than nominal, and shortens the feedback loop between writing code and seeing it exercised against everything else. The cost is discipline: changes must be small, feature-flagged when incomplete, and backed by a test suite fast enough to run on every merge.",
+    "index": 1
+  },
+  {
+    "role": "user",
+    "text": "Trunk-based development keeps every engineer working against a single shared branch, with short-lived feature branches merged at least daily. It reduces the integration pain that builds up when long-lived branches diverge, makes continuous integration meaningful rather than nominal, and shortens the feedback loop between writing code and seeing it exercised against everything else. The cost is discipline: changes must be small, feature-flagged when incomplete, and backed by a test suite fast enough to run on every merge. Make this shorter, two sentences.",
+    "index": 2
+  },
+  {
+    "role": "assistant",
+    "text": "Trunk-based development keeps everyone merging small changes into one shared branch at least daily, so integration problems surface immediately instead of piling up in long-lived branches. It requires small, feature-flagged changes and a fast test suite, but in return continuous integration actually means something.",
+    "index": 3
+  },
+  {
+    "role": "user",
+    "text": "Trunk-based development keeps everyone merging small changes into one shared branch at least daily, so integration problems surface immediately instead of piling up in long-lived branches. It requires small, feature-flagged changes and a fast test suite, but in return continuous integration actually means something. Perfect. Now add a one-line intro sentence before it.",
+    "index": 4
+  },
+  {
+    "role": "assistant",
+    "text": "Starting next sprint we are adopting trunk-based development across the platform team. Trunk-based development keeps everyone merging small changes into one shared branch at least daily, so integration problems surface immediately instead of piling up in long-lived branches. It requires small, feature-flagged changes and a fast test suite, but in return continuous integration actually means something.",
+    "index": 5
+  },
+  {
+    "role": "user",
+    "text": "Great, that works. Thanks.",
+    "index": 6
+  }
+]

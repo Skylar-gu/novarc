@@ -1,0 +1,37 @@
+[
+  {
+    "role": "user",
+    "text": "Our nightly export job started failing intermittently about a week ago. It reads ~2M rows, writes a CSV to S3, and the failure is a connection reset from the database roughly one time in three. Nothing obvious changed in the job. Where would you start?",
+    "index": 0
+  },
+  {
+    "role": "assistant",
+    "text": "Intermittent connection resets on a long read often point to a server-side timeout or an idle-connection reaper between the job and the database (a load balancer, a proxy, or the DB's own statement/connection timeout). Start by checking whether the failure correlates with elapsed time rather than row position.",
+    "index": 1
+  },
+  {
+    "role": "user",
+    "text": "It's not elapsed time. I logged progress and the resets happen at different row counts and different wall-clock points each run. So it's not a fixed timeout. What else fits a random-looking reset?",
+    "index": 2
+  },
+  {
+    "role": "assistant",
+    "text": "If it is not time-bound, candidates are: transient network loss between the job and the database, the database killing the connection under memory pressure or failover, or a connection pool handing the job a stale socket. Was there any infrastructure change around a week ago, even one that seems unrelated?",
+    "index": 3
+  },
+  {
+    "role": "user",
+    "text": "You said failover. We did move the read replica to a new instance class about eight days ago, which lines up. But a failover would kill every in-flight connection at once, not one in three across runs. Unless the job is opening multiple connections and only some land on a replica that's flapping. It uses a pool of 10. That's the flaw in assuming a single connection.",
+    "index": 4
+  },
+  {
+    "role": "assistant",
+    "text": "That is a good catch. If the pool spreads across replicas and one of them is unhealthy after the instance-class change, you would see a fraction of connections reset, varying by run as the pool cycles. Check the replica health metrics since the migration, and pin the job to the primary or a known-good replica as a test.",
+    "index": 5
+  },
+  {
+    "role": "user",
+    "text": "Pinning to the primary for tonight's run to isolate it. If it succeeds clean, the new replica instance is the problem and I'll take it up with infra.",
+    "index": 6
+  }
+]

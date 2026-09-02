@@ -1,0 +1,12 @@
+[
+  {
+    "role": "user",
+    "text": "Can you explain the difference between a process and a thread, briefly?",
+    "index": 0
+  },
+  {
+    "role": "assistant",
+    "text": "A process has its own memory space; threads share the memory of their parent process and are cheaper to create and switch between. A process isolates faults; a crash in one thread can take down the whole process.",
+    "index": 1
+  }
+]

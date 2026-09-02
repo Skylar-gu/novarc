@@ -1,0 +1,27 @@
+[
+  {
+    "role": "user",
+    "text": "Last session the instrument flagged that I accepted the retry design without testing it. This time I want to work through the caching layer myself first. The problem: our product API does about 8k req/s, 90 percent of it is the same 200 product IDs, and the origin database is the bottleneck. My assumption is that a simple in-process LRU per pod would absorb most of it. What breaks that assumption?",
+    "index": 0
+  },
+  {
+    "role": "assistant",
+    "text": "An in-process LRU per pod works well for a small hot set like 200 IDs. It breaks down if: the working set is actually larger and more uniform than you think, writes are frequent enough that staleness matters, or you have many pods and each cold-starts its cache on deploy, briefly stampeding the origin. It also gives you no cross-pod coordination for invalidation.",
+    "index": 1
+  },
+  {
+    "role": "user",
+    "text": "Staleness is the one I need to check. How stale can product data be before it is a real problem? If price changes need to be live within seconds, per-pod LRU with a 60s TTL is wrong. Let me find out the actual freshness requirement before I pick a design.",
+    "index": 2
+  },
+  {
+    "role": "assistant",
+    "text": "That is the right thing to pin down first. If price and availability must be near-real-time, you want either a short TTL with a push-based invalidation channel, or a shared cache (Redis) that a write path can invalidate directly. If a minute of staleness is acceptable for everything on that endpoint, the per-pod LRU is simplest and you can add a jittered TTL to avoid synchronized expiry.",
+    "index": 3
+  },
+  {
+    "role": "user",
+    "text": "I checked with the pricing team: availability must be live within 5 seconds, price can lag up to a minute. So the endpoint has mixed freshness needs. I think that means splitting the response: cache the stable product attributes per-pod with a 60s TTL, and read availability from a shared fast path that the inventory service invalidates on write. More moving parts than I wanted, but the single-TTL design would have served stale availability.",
+    "index": 4
+  }
+]

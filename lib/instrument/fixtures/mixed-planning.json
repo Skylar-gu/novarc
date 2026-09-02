@@ -1,0 +1,37 @@
+[
+  {
+    "role": "user",
+    "text": "Help me plan the migration of our user table off the shared database. I want to end up with a dedicated users service that owns its own store.",
+    "index": 0
+  },
+  {
+    "role": "assistant",
+    "text": "A typical sequence: (1) put all reads and writes behind a repository interface, (2) stand up the new store and dual-write, (3) backfill and reconcile, (4) flip reads to the new store, (5) stop writing to the old table, (6) drop it. The risky steps are the dual-write consistency window and any join in the current schema that crosses the users table.",
+    "index": 1
+  },
+  {
+    "role": "user",
+    "text": "We have about a dozen places that join against users. Isn't that a problem for step 4? If those joins are in reporting queries they can move to the new service's API, but a few are in hot request paths.",
+    "index": 2
+  },
+  {
+    "role": "assistant",
+    "text": "The hot-path joins are the real constraint. Options: denormalize the few user fields those paths need into the calling service's store and keep them updated via events, or accept an extra network call to the users service on those paths and measure whether the latency is acceptable. Reporting joins can move to a read replica or a nightly export.",
+    "index": 3
+  },
+  {
+    "role": "user",
+    "text": "Denormalizing the display name and status into the two hot services sounds right. Give me the step list with that folded in, and mark which steps are reversible.",
+    "index": 4
+  },
+  {
+    "role": "assistant",
+    "text": "1. Repository interface (reversible). 2. Add name/status columns to the two hot services, populate from a backfill, keep current via a users.updated event (reversible). 3. Stand up the users store, dual-write (reversible). 4. Backfill and reconcile (reversible). 5. Flip reads (reversible via a flag). 6. Stop old writes (hard to reverse). 7. Drop the table (irreversible).",
+    "index": 5
+  },
+  {
+    "role": "user",
+    "text": "Good, that's the plan. I'll start with step 1 this week.",
+    "index": 6
+  }
+]

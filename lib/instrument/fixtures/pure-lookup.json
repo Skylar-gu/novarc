@@ -1,0 +1,8 @@
+[
+  { "role": "user", "text": "What is the default port for PostgreSQL?", "index": 0 },
+  { "role": "assistant", "text": "5432.", "index": 1 },
+  { "role": "user", "text": "And for Redis?", "index": 2 },
+  { "role": "assistant", "text": "6379.", "index": 3 },
+  { "role": "user", "text": "How do I list all env vars in bash?", "index": 4 },
+  { "role": "assistant", "text": "Run `printenv` or `env`.", "index": 5 }
+]

@@ -302,7 +302,7 @@ Builders validate with `npx tsc --noEmit` + `npm run lint` + `npm run test`
 
 | WP | Builder | QA verdict | Orchestrator | Commit |
 |----|---------|-----------|--------------|--------|
-| P2-1 | — | — | — | — |
+| P2-1 | started by agent; core files landed; finished by orchestrator (fixtures, tests, rubric docs) after the agent's session ended mid-task | deferred to the Wave B integration review (P2-2/3/4 consume this contract directly) | reviewed every file; found + fixed paste-and-polish Load inflation (C1 now excludes pasted tokens; C4 excludes paste turns); 39 tests green | `e764f6b`+ this |
 | P2-2 | — | — | — | — |
 | P2-3 | — | — | — | — |
 | P2-4 | — | — | — | — |
