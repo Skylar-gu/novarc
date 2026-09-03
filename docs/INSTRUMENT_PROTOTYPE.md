@@ -5,6 +5,11 @@ architecture, the two scoring engines, the rubric summaries, the privacy
 decision, how to enable the language-model judge, and what is deliberately not
 done yet.
 
+Companion documents: [`RESEARCH.md`](RESEARCH.md) for the evidence base and its
+limits, [`INTERVENTIONS.md`](INTERVENTIONS.md) for every prompt the instrument
+can return and the technique behind it, [`VALIDATION.md`](VALIDATION.md) for the
+test program and current numbers.
+
 ---
 
 ## What it is
@@ -108,6 +113,16 @@ degrades to a heuristic reading with a visible mode flag, never to an error.
 The judge does not verify its own spans. `score.ts` routes every raw score
 through `validateResult`, which is the single place a fabricated receipt is
 caught and dropped.
+
+### Interventions
+
+For a signal below the intervention threshold, the heuristic engine returns one
+of four fixed prompts (the LLM judge writes its own). Each maps to an
+established technique from the learning and judgment literature — the generation
+effect, considering the opposite, productive failure, self-explanation —
+documented prompt by prompt in [`INTERVENTIONS.md`](INTERVENTIONS.md), with the
+honest caveat that a technique's effect *as a one-line chat prompt* is not yet
+shown and is what Phase 3 tests.
 
 ---
 

@@ -30,6 +30,9 @@ Drift**.
 | [`docs/PRODUCT.md`](docs/PRODUCT.md) | The NOVARC Instrument in detail — the three signals, the evidence standard ("no score without a receipt"), intervention, and the validation program. |
 | [`docs/VISION.md`](docs/VISION.md) | The larger thesis this connects to: human–AI coevolution, where the instrument goes next, and what "more magical" concretely means. |
 | [`docs/INSTRUMENT_PROTOTYPE.md`](docs/INSTRUMENT_PROTOTYPE.md) | What Phase 2 built: the `/instrument` prototype — architecture, the two scoring engines, rubric summaries, the privacy decision, and how to enable the language-model judge. |
+| [`docs/RESEARCH.md`](docs/RESEARCH.md) | The evidence the site and product rest on — the two anchor studies, the mechanism results, the techniques behind the interventions — each with its primary source and its limits. |
+| [`docs/INTERVENTIONS.md`](docs/INTERVENTIONS.md) | Every prompt the instrument can return for a detected gap, the research technique behind it, and the honest status of that link. |
+| [`docs/VALIDATION.md`](docs/VALIDATION.md) | The validation program's seed: a fixed transcript set, the harness (`npm run validate`), current heuristic numbers, and what is still untested. |
 
 ## Status
 
@@ -47,7 +50,10 @@ Drift**.
   sessions left unscored. A deterministic rubric engine runs by default; set
   `ANTHROPIC_API_KEY` (and optionally `INSTRUMENT_MODEL`, default `claude-opus-5`) to
   enable the language-model judge. See `docs/INSTRUMENT_PROTOTYPE.md`.
-- [ ] Validation harness
+- [x] Validation harness seed — `npm run validate` scores a fixed 18-transcript
+  set (`validation/set.md`) against reference labels and checks the heuristic
+  engine is byte-stable. Independent human-rater agreement and the LLM-judge
+  numbers are still pending. See `docs/VALIDATION.md`.
 
 ## Attribution
 
