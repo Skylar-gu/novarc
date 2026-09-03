@@ -29,6 +29,7 @@ Drift**.
 | [`docs/SPEC.md`](docs/SPEC.md) | Exactly what is being built: the marketing site (page-by-page, message architecture, design system, components), the company model, and the build phases. |
 | [`docs/PRODUCT.md`](docs/PRODUCT.md) | The NOVARC Instrument in detail — the three signals, the evidence standard ("no score without a receipt"), intervention, and the validation program. |
 | [`docs/VISION.md`](docs/VISION.md) | The larger thesis this connects to: human–AI coevolution, where the instrument goes next, and what "more magical" concretely means. |
+| [`docs/INSTRUMENT_PROTOTYPE.md`](docs/INSTRUMENT_PROTOTYPE.md) | What Phase 2 built: the `/instrument` prototype — architecture, the two scoring engines, rubric summaries, the privacy decision, and how to enable the language-model judge. |
 
 ## Status
 
@@ -39,8 +40,13 @@ Drift**.
 - [x] All four pages built (Home, Product, About, Research) + dataviz — WP-3–6
 - [x] Polish pass (per-route metadata/OG, sitemap/robots, 404, favicon, a11y sweep) — WP-7
 - [x] **Phase 1 complete — faithful static replica of novarc.tech, original prose throughout**
-- [ ] Phase 2: the "more magical" turn (see `docs/VISION.md`)
-- [ ] Instrument prototype (scoring engine + evidence receipts)
+- [ ] Phase 2: the "more magical" turn (see `docs/VISION.md`) — in progress
+- [x] Instrument prototype — live at `/instrument` (a **prototype**, not the validated
+  instrument). Paste one ChatGPT / Claude / Gemini transcript and it reads your half of
+  it: Load, Rigor, and the passages from your own messages behind each score, with most
+  sessions left unscored. A deterministic rubric engine runs by default; set
+  `ANTHROPIC_API_KEY` (and optionally `INSTRUMENT_MODEL`, default `claude-opus-5`) to
+  enable the language-model judge. See `docs/INSTRUMENT_PROTOTYPE.md`.
 - [ ] Validation harness
 
 ## Attribution

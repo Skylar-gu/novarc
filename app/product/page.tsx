@@ -6,6 +6,7 @@ import { ScrollReveal } from "@/components/blocks/ScrollReveal";
 import { SignalCard } from "@/components/blocks/SignalCard";
 import { WaitlistForm } from "@/components/blocks/WaitlistForm";
 import { Section } from "@/components/ui/Section";
+import { LinkButton } from "@/components/ui/Button";
 import { site, ogImage } from "@/lib/site";
 import {
   CommitmentList,
@@ -208,6 +209,34 @@ export default function ProductPage() {
           Whatever the testing turns up, favourable or not, it gets published.
           Waitlist members see it before anyone else.
         </p>
+      </Section>
+
+      <Section eyebrow="Available now" title="Try the working prototype">
+        <div className="flex max-w-2xl flex-col gap-5 text-lg leading-relaxed text-text-muted">
+          <p>
+            Everything above is still being validated, on the timeline that
+            section sets out. A rougher build of the same reading is already
+            online, and you can run it yourself now.
+          </p>
+          <p>
+            Give it one conversation you have had with ChatGPT, Claude, or
+            Gemini. It scores your half of that exchange for Load and Rigor and
+            shows the lines of your own writing that produced each figure. Most
+            transcripts come back without a score, which is how it is meant to
+            work.
+          </p>
+          <p>
+            The default engine is a deterministic pass over a written rubric. It
+            works from patterns in your phrasing and leans toward saying nothing,
+            so it under-reads reasoning that a careful person would credit. A
+            language-model judge does a closer read where the deployment is
+            configured with a key for it. In either mode this is an illustration
+            of the approach, not a reading to act on.
+          </p>
+        </div>
+        <div className="mt-8">
+          <LinkButton href="/instrument">Open the prototype</LinkButton>
+        </div>
       </Section>
 
       <Section title="Join the waitlist">

@@ -7,7 +7,14 @@ import { site } from "@/lib/site";
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();
-  const paths = ["/", "/product", "/about", "/research"];
+  const paths = ["/", "/product", "/instrument", "/about", "/research"];
+
+  // `/instrument` is a prototype surface, ranked below the four core pages.
+  const priorityFor = (path: string): number => {
+    if (path === "/") return 1;
+    if (path === "/instrument") return 0.7;
+    return 0.8;
+  };
 
   return paths.map((path) => ({
     // Home as the bare origin (no trailing slash) so it matches the canonical
@@ -15,6 +22,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: path === "/" ? site.url : new URL(path, site.url).toString(),
     lastModified,
     changeFrequency: "monthly",
-    priority: path === "/" ? 1 : 0.8,
+    priority: priorityFor(path),
   }));
 }

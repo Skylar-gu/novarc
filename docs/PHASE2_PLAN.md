@@ -307,5 +307,5 @@ Builders validate with `npx tsc --noEmit` + `npm run lint` + `npm run test`
 | P2-3 | done | wave gate: pass; nit: a lone stray role-marker line flipped the whole plain-text parse | fixed: marker mode now requires a real two-sided labelled exchange (≥2 markers, both roles) | Wave B commit |
 | P2-4 | done | wave gate: pass, no blockers (record, drift math, `useSyncExternalStore` stability all verified) | — | Wave B commit |
 | P2-5 | done | wave gate: 1 blocking (focus dropped to `<body>` on every view swap — WCAG 2.4.3) + nits | fixed: focus moves to the incoming section on phase change; namespaced the receipt anchor id by signal so Load/Rigor can cite the same turn; 200-body shape guard; per-row delete confirm; import errors as `role="alert"` | Wave C commit |
-| P2-6 | — | — | — | — |
+| P2-6 | done — "Instrument" in `navItems` (after Product) + `exploreItems` (before Waitlist); a "Try the working prototype" section on `/product` with the not-the-validated-instrument disclaimer and a link to `/instrument`; `/instrument` added to `sitemap.ts` (priority 0.7, monthly); new `docs/INSTRUMENT_PROTOTYPE.md`; SPEC Part 4 Phase 2 checklist ticked + privacy open question resolved; README status updated | — | — | — |
 | P2-7 | — | — | — | — |

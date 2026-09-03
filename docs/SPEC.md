@@ -264,11 +264,16 @@ longitudinal); results to be published regardless of outcome.
 - Lighthouse / a11y / theme-parity pass.
 
 ### Phase 2 — Make it real (the "more magical" turn — see [`VISION.md`](VISION.md))
-- Instrument prototype: transcript in → {Load, Rigor, Drift, receipts, one prompt}.
-- Scoring engine v0 with an explicit rubric; abstain by default.
-- "Receipt" viewer: every score expands to the quoted passages behind it.
-- Personal baseline + drift chart over time.
-- Browser extension or import flow for ChatGPT/Claude/Gemini transcripts.
+- [x] Instrument prototype: transcript in → {Load, Rigor, Drift, receipts, one prompt}.
+      Live at `/instrument`; details in [`INSTRUMENT_PROTOTYPE.md`](INSTRUMENT_PROTOTYPE.md).
+- [x] Scoring engine v0 with an explicit rubric; abstain by default. Two engines:
+      a deterministic heuristic pass (always on) and an optional LLM judge; the
+      output contract and the span-validation step are shared.
+- [x] "Receipt" viewer: every score expands to the quoted passages behind it.
+- [x] Personal baseline + drift chart over time — client-side, `novarc:instrument:v1`.
+- [x] Import flow for ChatGPT/Claude/Gemini transcripts (paste or file upload,
+      format auto-detected). A browser extension is deferred; the import flow
+      covers ingest for the prototype.
 
 ### Phase 3 — Validation harness
 - Human-agreement set (inter-rater + model-vs-human).
@@ -280,6 +285,11 @@ longitudinal); results to be published regardless of outcome.
 ### Open questions
 - Exact font families and licences.
 - Where waitlist submissions should land.
-- Whether we keep the NOVARC name or fork identity once Phase 2 diverges.
-- Privacy model for reading real transcripts (local-first vs. server scoring).
+- Whether we keep the NOVARC name or fork identity once Phase 2 diverges. *(Stands.)*
+- ~~Privacy model for reading real transcripts (local-first vs. server scoring).~~
+  Resolved for the prototype: local-first. The transcript is POSTed once to
+  `/api/instrument/score`, scored, and not persisted server-side; the capability
+  record lives only in the browser under `novarc:instrument:v1` and is
+  exportable, importable, and deletable by the user. Revisit before any
+  server-side history or multi-device sync.
 - What the instrument does when it disagrees with the user's self-assessment.

@@ -48,6 +48,8 @@ export interface NavItem {
 export const navItems: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "Product", href: "/product" },
+  // The product made real: a working prototype of the reading.
+  { label: "Instrument", href: "/instrument" },
   { label: "About", href: "/about" },
   { label: "Research", href: "/research" },
 ];
@@ -55,6 +57,7 @@ export const navItems: NavItem[] = [
 /** Footer "Explore" column. Waitlist is an anchor on the home closing section. */
 export const exploreItems: NavItem[] = [
   { label: "Product", href: "/product" },
+  { label: "Instrument", href: "/instrument" },
   { label: "About", href: "/about" },
   { label: "Research", href: "/research" },
   { label: "Waitlist", href: "/#waitlist" },
