@@ -30,6 +30,8 @@ Drift**.
 | [`docs/PRODUCT.md`](docs/PRODUCT.md) | The NOVARC Instrument in detail — the three signals, the evidence standard ("no score without a receipt"), intervention, and the validation program. |
 | [`docs/VISION.md`](docs/VISION.md) | The larger thesis this connects to: human–AI coevolution, where the instrument goes next, and what "more magical" concretely means. |
 | [`docs/INSTRUMENT_PROTOTYPE.md`](docs/INSTRUMENT_PROTOTYPE.md) | What Phase 2 built: the `/instrument` prototype — architecture, the two scoring engines, rubric summaries, the privacy decision, and how to enable the language-model judge. |
+| [`docs/INSTRUMENT_CLI.md`](docs/INSTRUMENT_CLI.md) | `npm run instrument` — a local command-line reader that scores Claude Code sessions you pick, on your machine, writing to `~/.novarc/record.json`. Nothing is uploaded. |
+| [`docs/SITE_COPY.md`](docs/SITE_COPY.md) | Every user-facing string on the site, page by page, mirrored in one file for review and revision. |
 | [`docs/RESEARCH.md`](docs/RESEARCH.md) | The evidence the site and product rest on — the two anchor studies, the mechanism results, the techniques behind the interventions — each with its primary source and its limits. |
 | [`docs/INTERVENTIONS.md`](docs/INTERVENTIONS.md) | Every prompt the instrument can return for a detected gap, the research technique behind it, and the honest status of that link. |
 | [`docs/VALIDATION.md`](docs/VALIDATION.md) | The validation program's seed: a fixed transcript set, the harness (`npm run validate`), current heuristic numbers, and what is still untested. |
@@ -54,6 +56,10 @@ Drift**.
   set (`validation/set.md`) against reference labels and checks the heuristic
   engine is byte-stable. Independent human-rater agreement and the LLM-judge
   numbers are still pending. See `docs/VALIDATION.md`.
+- [x] Local session reader — `npm run instrument` lists your Claude Code
+  sessions, scores the ones you pick with the heuristic engine on your machine,
+  and appends the readings to `~/.novarc/record.json`. No upload, no account,
+  no "read everything" mode. See `docs/INSTRUMENT_CLI.md`.
 
 ## Attribution
 

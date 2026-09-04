@@ -8,7 +8,9 @@ done yet.
 Companion documents: [`RESEARCH.md`](RESEARCH.md) for the evidence base and its
 limits, [`INTERVENTIONS.md`](INTERVENTIONS.md) for every prompt the instrument
 can return and the technique behind it, [`VALIDATION.md`](VALIDATION.md) for the
-test program and current numbers.
+test program and current numbers, [`INSTRUMENT_CLI.md`](INSTRUMENT_CLI.md) for
+`npm run instrument` — the local command-line reader that scores Claude Code
+sessions you pick, on your machine, into the same record shape this page uses.
 
 ---
 

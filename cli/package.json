@@ -1,0 +1,4 @@
+{
+  "//": "Scoped module-type marker so `node cli/*.ts` runs as ESM without the MODULE_TYPELESS_PACKAGE_JSON reparse warning. Not a separate npm package — type-checking, linting, and deps all come from the repo root.",
+  "type": "module"
+}
