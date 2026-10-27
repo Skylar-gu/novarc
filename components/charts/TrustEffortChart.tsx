@@ -8,16 +8,23 @@ import { cn } from "@/lib/cn";
  * knowledge workers over 936 first-hand uses of generative AI at work). The
  * study reported two opposing associations: higher confidence in the AI went
  * with less self-reported critical-thinking effort; higher confidence in one's
- * own judgment went with more. The paper reports regression coefficients, not a
- * plottable curve, so exact values are not establishable — the two lines here
- * are schematic and carry only the reported directions. This is stated in the
- * caption and in the SVG description.
+ * own judgment went with more.
  *
- * Two-series relationship plot (dataviz skill): the lines are told apart by
- * three channels, not colour alone — the accent vs. muted-ink tokens, distinct
- * end markers (circle vs. square, each with a 2px surface ring), and a direct
- * label on each line plus a legend. Axes carry no numeric scale, so no precise
- * measurement is implied. Static SVG: no motion to reduce.
+ * Slope / dumbbell chart, not a continuous relationship plot. The paper
+ * reports a regression coefficient for each association — a direction and a
+ * magnitude of linear association — not a fitted curve, so the shape of the
+ * relationship between the two ends (linear, threshold, diminishing returns,
+ * non-monotonic) is not evidence the paper provides. A continuous line swept
+ * across the full axis would assert a smooth function it cannot back up. This
+ * draws only two anchored points per series — lower- and higher-confidence
+ * groups — joined by a dashed connector that reads as "direction known, path
+ * between them unknown," never a measured trajectory.
+ *
+ * The two series are told apart by three channels, not colour alone — the
+ * accent vs. muted-ink tokens, distinct end markers (circle vs. square, each
+ * with a 2px surface ring) at *both* anchor points, and a direct label on each
+ * series plus a legend. Axes carry no numeric scale, so no precise measurement
+ * is implied. Static SVG: no motion to reduce.
  */
 
 const VIEW_W = 640;
@@ -45,7 +52,7 @@ export function TrustEffortChart({ className }: TrustEffortChartProps) {
         className,
       )}
     >
-      <h3 className="font-sans text-sm font-medium text-text">
+      <h3 className="font-sans text-lg font-semibold text-text">
         Confidence in the AI vs. confidence in one&rsquo;s own judgment
       </h3>
       <div className="overflow-x-auto">
@@ -58,32 +65,47 @@ export function TrustEffortChart({ className }: TrustEffortChartProps) {
           className="block h-auto w-full min-w-[540px]"
         >
           <title id="trust-effort-title">
-            Two opposing relationships reported between a worker&rsquo;s
-            confidence and their self-reported critical-thinking effort
+            Two opposing associations reported between a worker&rsquo;s
+            confidence and their self-reported critical-thinking effort,
+            compared between lower- and higher-confidence groups
           </title>
           <desc id="trust-effort-desc">
-            Schematic line chart with no numeric scale. As confidence in the AI
-            rises, self-reported critical-thinking effort falls. As confidence
-            in one&rsquo;s own judgment rises, that effort rises with it. The
-            directions are those reported by Lee and colleagues, CHI 2025; the
-            lines are illustrative of the reported direction, not measured
-            values.
+            Schematic slope chart with no numeric scale, comparing two groups —
+            lower confidence and higher confidence — rather than a continuous
+            curve. Workers with higher confidence in the AI self-reported less
+            critical-thinking effort than those with lower confidence in it.
+            Workers with higher confidence in their own judgment self-reported
+            more effort than those with lower confidence in it. The directions
+            are those reported by Lee and colleagues, CHI 2025, who reported a
+            regression coefficient for each, not a fitted curve; the dashed
+            connectors mark that the shape of the relationship between the two
+            groups is not established, only its direction.
           </desc>
 
-          {/* Axes */}
-          <line
-            x1={X0}
-            x2={X1}
-            y1={Y_AXIS_BOTTOM}
-            y2={Y_AXIS_BOTTOM}
-            stroke="var(--border)"
-            strokeWidth={1}
-          />
+          {/* Y-axis only — the x-position is two discrete groups, not a
+             continuous scale, so no x-axis line is drawn. */}
           <line
             x1={X0}
             x2={X0}
             y1={PLOT.top}
             y2={Y_AXIS_BOTTOM}
+            stroke="var(--border)"
+            strokeWidth={1}
+          />
+          {/* Category ticks at the two anchor points only. */}
+          <line
+            x1={X0}
+            x2={X0}
+            y1={Y_AXIS_BOTTOM}
+            y2={Y_AXIS_BOTTOM + 6}
+            stroke="var(--border)"
+            strokeWidth={1}
+          />
+          <line
+            x1={X1}
+            x2={X1}
+            y1={Y_AXIS_BOTTOM}
+            y2={Y_AXIS_BOTTOM + 6}
             stroke="var(--border)"
             strokeWidth={1}
           />
@@ -118,7 +140,7 @@ export function TrustEffortChart({ className }: TrustEffortChartProps) {
             Self-reported critical-thinking effort
           </text>
 
-          {/* X-axis: meaning as words */}
+          {/* X-axis: two discrete groups, not a continuous scale */}
           <text
             x={X0}
             y={Y_AXIS_BOTTOM + 24}
@@ -126,7 +148,7 @@ export function TrustEffortChart({ className }: TrustEffortChartProps) {
             fill="var(--text-muted)"
             fontSize={12}
           >
-            lower confidence
+            lower-confidence group
           </text>
           <text
             x={X1}
@@ -135,10 +157,12 @@ export function TrustEffortChart({ className }: TrustEffortChartProps) {
             fill="var(--text-muted)"
             fontSize={12}
           >
-            higher confidence
+            higher-confidence group
           </text>
 
-          {/* Line A — confidence in the AI: falls from left to right */}
+          {/* Series A — confidence in the AI: higher-confidence group reports
+             less effort than the lower-confidence group. Dashed: only the two
+             endpoints are evidenced, not the path between them. */}
           <line
             x1={X0}
             x2={X1}
@@ -147,6 +171,16 @@ export function TrustEffortChart({ className }: TrustEffortChartProps) {
             stroke="var(--text-muted)"
             strokeWidth={2}
             strokeLinecap="round"
+            strokeDasharray="2 5"
+          />
+          <rect
+            x={X0 - 5}
+            y={Y_TOP - 5}
+            width={10}
+            height={10}
+            fill="var(--text-muted)"
+            stroke="var(--surface-raised)"
+            strokeWidth={2}
           />
           <rect
             x={X1 - 5}
@@ -167,7 +201,8 @@ export function TrustEffortChart({ className }: TrustEffortChartProps) {
             Confidence in the AI
           </text>
 
-          {/* Line B — confidence in one's own judgment: rises from left to right */}
+          {/* Series B — confidence in one's own judgment: higher-confidence
+             group reports more effort than the lower-confidence group. */}
           <line
             x1={X0}
             x2={X1}
@@ -176,6 +211,15 @@ export function TrustEffortChart({ className }: TrustEffortChartProps) {
             stroke="var(--accent)"
             strokeWidth={2}
             strokeLinecap="round"
+            strokeDasharray="2 5"
+          />
+          <circle
+            cx={X0}
+            cy={Y_BOTTOM}
+            r={5}
+            fill="var(--accent)"
+            stroke="var(--surface-raised)"
+            strokeWidth={2}
           />
           <circle
             cx={X1}
@@ -205,6 +249,7 @@ export function TrustEffortChart({ className }: TrustEffortChartProps) {
               stroke="var(--accent)"
               strokeWidth={2}
               strokeLinecap="round"
+              strokeDasharray="2 5"
             />
             <text
               x={30}
@@ -223,6 +268,7 @@ export function TrustEffortChart({ className }: TrustEffortChartProps) {
               stroke="var(--text-muted)"
               strokeWidth={2}
               strokeLinecap="round"
+              strokeDasharray="2 5"
             />
             <text
               x={30}
@@ -242,8 +288,10 @@ export function TrustEffortChart({ className }: TrustEffortChartProps) {
           Across the tasks surveyed, the two kinds of confidence pulled in
           opposite directions: trust placed in the tool went with less scrutiny
           of its output, while trust in one&rsquo;s own judgment went with more.
-          The lines are schematic — they carry the reported directions, not
-          measured values.
+          The study reports this as a regression coefficient, not a curve, so
+          the dashed lines here compare only two groups — lower- and
+          higher-confidence — and carry the reported direction, not a measured
+          shape in between.
         </span>
         <span className="text-xs">
           Source: Lee et al.,{" "}
