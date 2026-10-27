@@ -9,6 +9,11 @@ import {
   parseTranscript,
   type TranscriptFormat,
 } from "@/lib/instrument/parsers";
+import {
+  SPLIT_NETWORK_ERROR,
+  UNREADABLE_SPLIT_RESPONSE,
+  splitErrorMessage,
+} from "@/components/instrument/errorMessage";
 
 export interface TranscriptInputProps {
   /** Called with the normalized turns when the person commits a valid parse. */
@@ -20,7 +25,10 @@ export interface TranscriptInputProps {
 type ParseState =
   | { status: "empty" }
   | { status: "ok"; turns: Turn[]; format: TranscriptFormat }
-  | { status: "error"; message: string };
+  | { status: "splitting" }
+  /** `splittable` is false once a split attempt has itself failed, so the
+   *  retry affordance does not loop on a deployment with no key configured. */
+  | { status: "error"; message: string; splittable: boolean };
 
 const DEBOUNCE_MS = 300;
 const PREVIEW_CHARS = 140;
@@ -55,6 +63,7 @@ function evaluate(input: string): ParseState {
         error instanceof ParseError
           ? error.message
           : "This transcript could not be read.",
+      splittable: true,
     };
   }
 }
@@ -124,11 +133,67 @@ export function TranscriptInput({
       applyNow(await file.text());
     } catch {
       clearTimer();
-      setState({ status: "error", message: "This file could not be read." });
+      setState({
+        status: "error",
+        message: "This file could not be read.",
+        splittable: false,
+      });
     }
   }
 
-  const ready = state.status === "ok" && !disabled;
+  /**
+   * Fallback for text the local heuristics could not segment: send it once to
+   * `/api/instrument/split`, where a smaller model splits it into turns. Only
+   * reachable from the "could not tell the sides apart" error state.
+   */
+  async function requestSplit() {
+    clearTimer();
+    setState({ status: "splitting" });
+    try {
+      const response = await fetch("/api/instrument/split", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+
+      if (!response.ok) {
+        let code: string | undefined;
+        try {
+          const errorBody = (await response.json()) as { error?: unknown };
+          code = typeof errorBody.error === "string" ? errorBody.error : undefined;
+        } catch {
+          // No readable body — fall through to the status-only message.
+        }
+        setState({
+          status: "error",
+          message: splitErrorMessage(code, response.status),
+          splittable: false,
+        });
+        return;
+      }
+
+      const body = (await response.json()) as { turns?: unknown };
+      const turns = Array.isArray(body.turns) ? (body.turns as Turn[]) : null;
+      if (!turns || turns.length < 2) {
+        setState({
+          status: "error",
+          message: UNREADABLE_SPLIT_RESPONSE,
+          splittable: false,
+        });
+        return;
+      }
+      setState({ status: "ok", turns, format: "AI split" });
+    } catch {
+      setState({
+        status: "error",
+        message: SPLIT_NETWORK_ERROR,
+        splittable: false,
+      });
+    }
+  }
+
+  const busy = disabled || state.status === "splitting";
+  const ready = state.status === "ok" && !busy;
 
   return (
     <div className="flex flex-col gap-4">
@@ -143,7 +208,7 @@ export function TranscriptInput({
           <button
             type="button"
             onClick={() => applyNow(EXAMPLE_TRANSCRIPT)}
-            disabled={disabled}
+            disabled={busy}
             className="font-sans text-sm text-accent underline underline-offset-2 transition-colors duration-150 hover:text-text disabled:pointer-events-none disabled:opacity-50 motion-reduce:transition-none"
           >
             Load an example
@@ -154,13 +219,11 @@ export function TranscriptInput({
           id={fieldId}
           value={text}
           onChange={handleTextChange}
-          disabled={disabled}
+          disabled={busy}
           rows={12}
           spellCheck={false}
           aria-describedby={statusId}
-          placeholder={
-            "Paste a conversation. Label the two sides with “You:” and “Assistant:”, separate messages with a blank line, or paste a ChatGPT or Claude export."
-          }
+          placeholder="Paste a conversation here."
           className="w-full resize-y rounded-md border border-border bg-surface-raised p-3 font-sans text-sm leading-relaxed text-text placeholder:text-text-muted disabled:opacity-50"
         />
       </div>
@@ -170,14 +233,14 @@ export function TranscriptInput({
           htmlFor={fileId}
           className="font-sans text-sm font-medium text-text"
         >
-          Or load a file
+          Or load a conversation JSON file
         </label>
         <input
           id={fileId}
           type="file"
           accept=".json,.txt,text/plain,application/json"
           onChange={handleFile}
-          disabled={disabled}
+          disabled={busy}
           className="block w-full text-sm text-text-muted file:mr-3 file:rounded-full file:border file:border-border file:bg-transparent file:px-4 file:py-1.5 file:font-sans file:text-sm file:text-text file:transition-colors file:duration-150 hover:file:bg-surface file:motion-reduce:transition-none disabled:opacity-50"
         />
         <p className="text-xs text-text-muted">
@@ -192,8 +255,22 @@ export function TranscriptInput({
         className="min-h-[1.25rem]"
       >
         {state.status === "error" && (
-          <p className="rounded-md border border-border bg-surface p-3 text-sm leading-relaxed text-text">
-            {state.message}
+          <div className="flex flex-col gap-2 rounded-md border border-border bg-surface p-3 text-sm leading-relaxed text-text">
+            <p>{state.message}</p>
+            {state.splittable && (
+              <button
+                type="button"
+                onClick={requestSplit}
+                className="self-start font-sans text-sm text-accent underline underline-offset-2 transition-colors duration-150 hover:text-text motion-reduce:transition-none"
+              >
+                Try splitting it automatically
+              </button>
+            )}
+          </div>
+        )}
+        {state.status === "splitting" && (
+          <p className="font-sans text-sm text-text-muted">
+            Splitting into turns&hellip;
           </p>
         )}
         {state.status === "ok" && (

@@ -45,12 +45,14 @@ record.
 ```mermaid
 flowchart TD
   A[Transcript: raw text, ChatGPT export, Claude export, or generic JSON] --> B[parse: lib/instrument/parsers]
-  B --> C[normalize: Turn[] = role, text, index]
+  B -- heuristics fail --> S[turn-splitter: llmSplit.ts or openrouterSplit.ts, optional]
+  S --> C
+  B -- heuristics succeed --> C[normalize: Turn[] = role, text, index]
   C --> D{gate: enough to score?}
   D -- no --> U[unscored, with a reason]
-  D -- yes --> E{ANTHROPIC_API_KEY set?}
+  D -- yes --> E{OPENROUTER_API_KEY or ANTHROPIC_API_KEY set?}
   E -- no --> H[heuristic engine: lib/instrument/heuristic.ts]
-  E -- yes --> J[LLM judge: lib/instrument/judge.ts]
+  E -- yes --> J[LLM judge: judge.ts or openrouterJudge.ts]
   J -- any failure --> H
   H --> V[validate: lib/instrument/validate.ts, strips fabricated receipts]
   J --> V
@@ -62,7 +64,10 @@ flowchart TD
 
 - **Parse / normalize** — `lib/instrument/parsers/` (`detectAndParse` tries JSON
   shapes first, then plain text); output is `Turn[]` from
-  `lib/instrument/normalize.ts`.
+  `lib/instrument/normalize.ts`. When every local heuristic fails to tell the
+  two sides apart, `TranscriptInput` can send the raw text once to
+  `/api/instrument/split`, where a smaller model (`lib/instrument/llmSplit.ts`)
+  splits it instead — see "The turn-splitter" below.
 - **Gate + score + validate** — `lib/instrument/score.ts` runs the gate, calls
   the injected judge or the heuristic engine, then `validateResult`. The API
   route (`app/api/instrument/score/core.ts`) chooses the engine: LLM judge when
@@ -101,20 +106,70 @@ confidently asserted position from a carefully reasoned one. Expect it to
 abstain or score low on real sessions a careful human rater would score higher.
 This is the intended failure direction — under-read rather than over-credit.
 
-### LLM judge — optional
+### LLM judge — optional, two interchangeable backends
 
-`lib/instrument/judge.ts`. `makeLlmJudge()` builds the prompt from the rubric
-text and calls `client.messages.parse()` with a JSON-schema output format
-(values 0..1, spans, turn refs, rationales), `thinking: { type: "adaptive" }`,
-and the model from `INSTRUMENT_MODEL` (default `claude-opus-5`). It takes one
-retry on unparseable output, then throws `JudgeUnavailableError` on any
-failure — network, rate limit, auth, or schema mismatch. The route catches that
-and falls back to the heuristic engine, so the absence or failure of the judge
-degrades to a heuristic reading with a visible mode flag, never to an error.
+Both backends share one system prompt, one user-prompt builder, one
+JSON-schema output format (values 0..1, spans, turn refs, rationales), and one
+raw-score coercion — all defined once in `lib/instrument/judge.ts` and reused
+by the other — so they read the transcript under identical instructions and
+are interchangeable behind the same `Judge` contract.
 
-The judge does not verify its own spans. `score.ts` routes every raw score
+- `lib/instrument/judge.ts`. `makeLlmJudge()` calls `client.messages.parse()`
+  against the Claude API, with `thinking: { type: "adaptive" }` and the model
+  from `INSTRUMENT_MODEL` (default `claude-opus-5`).
+- `lib/instrument/openrouterJudge.ts`. `makeOpenRouterJudge()` calls
+  OpenRouter's chat-completions endpoint directly with `fetch` (no SDK), with
+  the model from `INSTRUMENT_MODEL` (default `google/gemini-2.5-flash`) —
+  picked for low per-token cost at the volume this route expects.
+
+`core.ts` selects the backend: `OPENROUTER_API_KEY` present -> the OpenRouter
+judge; else `ANTHROPIC_API_KEY` present -> the Claude judge; else the
+heuristic engine directly. Either backend takes one retry on unparseable
+output, then throws `JudgeUnavailableError` on any failure — network, rate
+limit, auth, or schema mismatch. The route catches that and falls back to the
+heuristic engine, so the absence or failure of a judge degrades to a heuristic
+reading with a visible mode flag, never to an error.
+
+Neither judge verifies its own spans. `score.ts` routes every raw score
 through `validateResult`, which is the single place a fabricated receipt is
-caught and dropped.
+caught and dropped — regardless of which backend produced it.
+
+### The turn-splitter — optional, parsing only, two backends
+
+`/api/instrument/split`. The free, local, synchronous heuristics in
+`lib/instrument/parsers/` are tried first and remain the default: labelled
+lines (`You:` / `Assistant:`), bare speaker-name lines with no colon (the
+shape produced when a conversation is copied straight off a chat page), and
+blank-line blocks. Only when all of those fail does the input UI offer to send
+the raw text once to this route, which asks a smaller model to copy it back
+out split into `{ role, text }` turns — verbatim, with no summarizing or
+rewording. It never scores or reasons about content, so it runs on cheaper
+models than the judge.
+
+Both backends share one system prompt, one user-prompt builder, one
+JSON-schema output format, and one raw-turns coercion — all defined once in
+`lib/instrument/llmSplit.ts` and reused by the other.
+
+- `lib/instrument/llmSplit.ts`. `makeLlmSplitter()` calls
+  `client.messages.parse()` against the Claude API, with the model from
+  `INSTRUMENT_SPLIT_MODEL` (default `claude-haiku-5`).
+- `lib/instrument/openrouterSplit.ts`. `makeOpenRouterSplitter()` calls
+  OpenRouter's chat-completions endpoint directly with `fetch`, trying a
+  primary model (`INSTRUMENT_SPLIT_MODEL`, default
+  `google/gemini-2.5-flash-lite`) and, only if that one fails outright or its
+  output never validates, a backup model (`INSTRUMENT_SPLIT_BACKUP_MODEL`,
+  default `openai/gpt-4o-mini`). This is the one place in the prototype that
+  falls back across models rather than just retrying the same one — splitting
+  is cheap and low-stakes next to scoring, so the extra round trip is worth it
+  here.
+
+`core.ts` selects the backend the same way the scoring route does:
+`OPENROUTER_API_KEY` present → the OpenRouter splitter; else
+`ANTHROPIC_API_KEY` present → the Claude splitter; else the local heuristics'
+failure is reported as-is. Any failure (no key, network, rate limit, schema
+mismatch on every model tried) throws `SplitUnavailableError`; the route
+reports that the transcript could not be split, and the person is left to
+label it by hand.
 
 ### Interventions
 
@@ -160,6 +215,10 @@ open question for the prototype.
 - The transcript is POSTed once to `/api/instrument/score`, scored, and **not
   persisted server-side**. The route is stateless and never echoes the
   transcript back.
+- If the local heuristics cannot segment a paste and the person chooses to
+  fall back to the turn-splitter, the raw text is POSTed once to
+  `/api/instrument/split` under the same rule: stateless, not persisted, and
+  the response is only the turns derived from it.
 - The capability record — scored sessions, baseline, Drift — lives **only in the
   browser**, under the versioned key `novarc:instrument:v1`.
 - The record is the user's: it can be exported to JSON, imported back, and
@@ -169,14 +228,24 @@ Revisit this before any server-side history or multi-device sync.
 
 ---
 
-## Enabling the LLM judge
+## Enabling the LLM judge and the turn-splitter
 
-- Set `ANTHROPIC_API_KEY` in the environment. When it is present the route tries
-  the judge first and falls back to the heuristic engine on any failure.
-- Optionally set `INSTRUMENT_MODEL` to override the model (default
-  `claude-opus-5`).
-- No `.env` file is committed. When the key is unset, the whole prototype still
-  works on the heuristic engine and the UI shows the heuristic mode flag.
+Both routes pick a backend from whichever key is set, `OPENROUTER_API_KEY`
+first:
+
+- Set `OPENROUTER_API_KEY` to use the cheaper OpenRouter backends for both.
+  The judge uses `google/gemini-2.5-flash`; the splitter tries
+  `google/gemini-2.5-flash-lite` first, falling back to `openai/gpt-4o-mini`
+  only if that one fails or its output never validates. Override either with
+  `INSTRUMENT_MODEL` (judge) or `INSTRUMENT_SPLIT_MODEL` /
+  `INSTRUMENT_SPLIT_BACKUP_MODEL` (splitter, primary and backup respectively).
+- Else set `ANTHROPIC_API_KEY` to use the Claude backends instead:
+  `claude-opus-5` for the judge, `claude-haiku-5` for the splitter — same two
+  override variables apply.
+- No `.env` file is committed. When neither key is set, the scoring route
+  works on the heuristic engine with its mode flag shown, and a paste the
+  local parsers cannot segment just has to be labelled by hand — the split
+  route reports `split_unavailable` rather than silently doing nothing.
 
 ---
 

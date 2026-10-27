@@ -13,7 +13,6 @@ export function Footer() {
             <p className="mt-4 text-sm leading-relaxed text-text-muted">
               {site.identity}
             </p>
-            <p className="mt-4 text-sm text-text-muted">{site.location}</p>
           </div>
 
           <nav aria-label="Explore" className="md:text-right">

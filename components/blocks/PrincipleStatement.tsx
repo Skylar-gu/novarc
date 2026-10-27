@@ -13,8 +13,8 @@ export interface PrincipleStatementProps {
 }
 
 /**
- * A large, numbered single-sentence statement — the standalone-principle
- * treatment used between denser sections. Oversized serif, generous space.
+ * A numbered single-sentence statement — the standalone-principle treatment
+ * used between denser sections. Serif, set below the page title, generous space.
  */
 export function PrincipleStatement({
   index,
@@ -29,7 +29,7 @@ export function PrincipleStatement({
         <span aria-hidden="true"> · </span>
         {label}
       </p>
-      <p className="max-w-4xl font-serif text-3xl font-medium leading-[1.15] tracking-tight text-text sm:text-4xl md:text-5xl">
+      <p className="max-w-4xl font-serif text-2xl font-medium leading-[1.2] tracking-tight text-text sm:text-3xl md:text-4xl">
         {children}
       </p>
     </div>

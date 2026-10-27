@@ -31,13 +31,17 @@ export { parseChatGptExport } from "./chatgpt.ts";
 export { parseClaudeExport } from "./claude.ts";
 export { parseGenericJson } from "./genericJson.ts";
 
-/** A short label for the route that parsed the transcript, for the input UI. */
+/** A short label for the route that parsed the transcript, for the input UI.
+ *  `"AI split"` is not produced here — it is stamped by `TranscriptInput` when
+ *  `/api/instrument/split` (`lib/instrument/llmSplit.ts`) segmented the text
+ *  after every heuristic below had already failed. */
 export type TranscriptFormat =
   | "ChatGPT export"
   | "Claude export"
   | "JSON transcript"
   | "labelled text"
-  | "blank-line blocks";
+  | "blank-line blocks"
+  | "AI split";
 
 export interface ParsedTranscript {
   turns: Turn[];

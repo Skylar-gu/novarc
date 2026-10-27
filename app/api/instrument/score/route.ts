@@ -3,9 +3,9 @@
  *
  * Scores one transcript and returns the fixed `ScoreResult` contract. Stateless:
  * nothing is written, and the transcript is never echoed back. The engine used
- * is reported on `engineMode` — the LLM judge when `ANTHROPIC_API_KEY` is set
- * (falling back to the heuristic engine when the judge is unavailable), the
- * heuristic engine otherwise.
+ * is reported on `engineMode` — an LLM judge when `OPENROUTER_API_KEY` or
+ * `ANTHROPIC_API_KEY` is set (falling back to the heuristic engine when the
+ * judge is unavailable), the heuristic engine otherwise. See `core.ts`.
  *
  * Request body: `{ turns: Turn[], coached?: boolean, history?: unknown }`.
  * `history` is accepted and ignored — Drift is computed client-side (P2-4).

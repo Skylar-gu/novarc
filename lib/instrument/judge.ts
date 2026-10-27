@@ -1,5 +1,5 @@
 /**
- * The optional LLM judge.
+ * The Claude-backed LLM judge.
  *
  * `makeLlmJudge()` returns a `Judge` (the injected scoring function `score.ts`
  * expects). It calls the Claude API with structured outputs to get back a raw
@@ -11,6 +11,12 @@
  * network, rate limit, auth, or output that will not parse after one retry — it
  * throws `JudgeUnavailableError`. The scoring route catches that and falls back
  * to the deterministic heuristic engine with a visible mode flag.
+ *
+ * The rubric prompt, schema, and raw-score coercion (`SYSTEM_PROMPT`,
+ * `buildUserPrompt`, `RAW_SCORE_SCHEMA`, `coerceRawScore`, `RETRY_NOTE`) are
+ * exported so `openrouterJudge.ts` — a cheaper, OpenAI-compatible judge
+ * backend — can reuse them and stay interchangeable behind the same `Judge`
+ * contract and the same evidence rules.
  *
  * It may import `@anthropic-ai/sdk`, `./types.ts`, and `./score.ts` (for the
  * `Judge` type). It must not import anything under `app/`.
@@ -105,7 +111,9 @@ export const RAW_SCORE_SCHEMA = {
   additionalProperties: false,
 } as const;
 
-const SYSTEM_PROMPT = [
+/** Shared across judge backends so a Claude judge and an OpenRouter judge
+ *  read the transcript under the same instructions. */
+export const SYSTEM_PROMPT = [
   "You are a measurement instrument. You read one transcript of a person working",
   "with an AI assistant and report how the person reasoned while producing the",
   "result. You never grade the assistant's answers, only the person's own turns.",
@@ -120,7 +128,14 @@ function renderTurn(turn: Turn): string {
   return `[turn ${turn.index}] ${role}:\n${turn.text}`;
 }
 
-function buildUserPrompt(rubricText: string, turns: Turn[]): string {
+/** Appended to the user prompt on the one retry after unparseable output.
+ *  Exported so other judge backends (e.g. `openrouterJudge.ts`) share it. */
+export const RETRY_NOTE =
+  "\n\n--- NOTE ---\nYour previous reply did not parse as the required " +
+  "structured object. Return only a JSON object matching the schema, with " +
+  "load, rigor, and intervention each either the object shape or null.";
+
+export function buildUserPrompt(rubricText: string, turns: Turn[]): string {
   return [
     rubricText,
     "",
@@ -190,7 +205,10 @@ function coerceIntervention(value: unknown): Intervention | null {
  * Map the parsed model output to a `RawScore`, or return `null` when the
  * top-level shape is unusable (which triggers exactly one retry).
  */
-function coerceRawScore(parsed: unknown, coached: boolean): RawScore | null {
+export function coerceRawScore(
+  parsed: unknown,
+  coached: boolean,
+): RawScore | null {
   if (!isRecord(parsed)) return null;
   if (typeof parsed.scored !== "boolean") return null;
 
@@ -264,11 +282,6 @@ export function makeLlmJudge(opts?: { model?: string }): Judge {
   return async function llmJudge(turns, rubricText, { coached }) {
     const client = new Anthropic();
     const basePrompt = buildUserPrompt(rubricText, turns);
-    const RETRY_NOTE =
-      "\n\n--- NOTE ---\nYour previous reply did not parse as the required " +
-      "structured object. Return only a JSON object matching the schema, with " +
-      "load, rigor, and intervention each either the object shape or null.";
-
     let lastMalformed: unknown = null;
 
     for (let attempt = 0; attempt < 2; attempt += 1) {

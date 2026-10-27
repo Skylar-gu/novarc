@@ -94,6 +94,32 @@ test("an unlabelled single block is rejected", () => {
   );
 });
 
+test("bare speaker-name lines (no colon) are recognised, anchored on the model name", () => {
+  const result = parsePlainTextWithShape(
+    [
+      "Skylar Gu",
+      "We are getting read timeouts on the dashboard queries.",
+      "",
+      "Claude",
+      "A replica helps if the primary is read-bound; it will not help if a few",
+      "queries are doing sequential scans.",
+      "",
+      "Skylar Gu",
+      "The slow log shows sequential scans on a twenty million row table.",
+    ].join("\n"),
+  );
+
+  assert.equal(result.shape, "labelled text");
+  assert.deepEqual(
+    result.turns.map((t) => t.role),
+    ["user", "assistant", "user"],
+  );
+  assert.equal(
+    result.turns[1].text,
+    "A replica helps if the primary is read-bound; it will not help if a few\nqueries are doing sequential scans.",
+  );
+});
+
 test("a single marker (one side only) is rejected", () => {
   assert.throws(
     () => parsePlainText("You: only my side is here\nand a follow-on line"),

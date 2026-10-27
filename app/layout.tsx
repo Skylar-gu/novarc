@@ -4,7 +4,6 @@ import "./globals.css";
 import { fontVariables } from "@/app/fonts";
 import { site, ogImage } from "@/lib/site";
 import { themeInitScript } from "@/lib/theme";
-import { TopRibbon } from "@/components/chrome/TopRibbon";
 import { Header } from "@/components/chrome/Header";
 import { Footer } from "@/components/chrome/Footer";
 
@@ -57,7 +56,6 @@ export default function RootLayout({
         />
       </head>
       <body className="flex min-h-dvh flex-col">
-        <TopRibbon />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />

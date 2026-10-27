@@ -3,7 +3,6 @@ import { Section } from "@/components/ui/Section";
 import { Hero } from "@/components/blocks/Hero";
 import { StudyCard } from "@/components/blocks/StudyCard";
 import { FindingCard } from "@/components/blocks/FindingCard";
-import { WaitlistForm } from "@/components/blocks/WaitlistForm";
 import { RecallFailureChart } from "@/components/charts/RecallFailureChart";
 import { TrustEffortChart } from "@/components/charts/TrustEffortChart";
 import { externalLinks, site, ogImage } from "@/lib/site";
@@ -68,22 +67,25 @@ export default function ResearchPage() {
         eyebrow="Research"
         headline={
           <>
-            Build a tool to spare people effort and it tends to take the{" "}
-            <em>thinking</em> with it. That effect has now been measured.
+            Two independent research teams found that a tool built to spare
+            people effort can take the <em>thinking</em> with it. Ours is
+            built to reverse that.
           </>
         }
-        sub="The result shows up across teams that share no method and no dataset. Hand more of your reasoning to the tool, and your own capacity for it thins out. What follows is the two studies the case rests on, the cognitive science that explains them, and the test we accept for our own work."
+        sub="Both found reliance on AI tools inversely correlated against the person's own effort: less of their own thinking and less time spent checking results. We delve into the studies behind that finding below."
         primaryCta={{ label: "Join the waitlist", href: "/#waitlist" }}
         secondaryCta={{ label: "See the instrument", href: "/product" }}
       />
 
-      <Section divider={false}>
+      <Section divider={false} className="-mt-20 sm:-mt-28">
         <p className="max-w-2xl text-lg leading-relaxed text-text-muted">
-          One group wired essay-writers for EEG. Another asked several hundred
-          knowledge workers how they actually use AI on the job. The projects
-          had no connection to each other and reported the same thing: the
-          reasoning you delegate is reasoning you slowly lose the ability to
-          do.
+          One group had people write essays while hooked up to EEG. Another
+          asked several hundred knowledge workers how they actually use AI on
+          the job. Neither study
+          ran long enough to show a skill eroding over time — but both found
+          the same pattern in the moment: the more someone leaned on the tool,
+          the less of their own thinking showed up in the work, and the less
+          effort went into checking it.
         </p>
       </Section>
 
@@ -201,14 +203,6 @@ export default function ResearchPage() {
           All five report to the same question: can someone who uses it do more
           without it than they could before?
         </p>
-      </Section>
-
-      <Section title="Validation is under way. The first instrument follows in 2026.">
-        <p className="mb-8 max-w-xl leading-relaxed text-text-muted">
-          The people on the list see the numbers first — including the ones
-          that go against us.
-        </p>
-        <WaitlistForm variant="inline" />
       </Section>
     </>
   );

@@ -375,13 +375,13 @@ Page metadata description: A working prototype of the NOVARC instrument: paste o
 
 ## About (`/about`)
 
-Page metadata description: The company behind the instrument: its founding argument, why it is run as a single house rather than a set of startups, and answers to the questions that come up most.
+Page metadata description: The company behind the instrument: its founding argument, and the six outcomes every NOVARC product is held to.
 
 ### Hero
 
 - Eyebrow: About NOVARC
-- Headline: We build AI to *enlarge* what a person is capable of, not to do it for them.
-- Sub: NOVARC builds AI, out of Zürich. The measure it works to is easy to state: with the system switched off, is the person more capable than before, or less? A first instrument is being validated as of now; everything after it answers to the same measure.
+- Headline: We build AI to *expand* what a person is capable of, not to do it for them.
+- Sub: NOVARC builds AI that gives an affirmative to: without the system, is the person more capable than before, or less? A first instrument is being validated as of now; everything after it answers to the same measure.
 - Primary CTA: Join the waitlist (→ `/#waitlist`)
 - Secondary CTA: See the first instrument (→ `/product`)
 
@@ -397,16 +397,8 @@ Page metadata description: The company behind the instrument: its founding argum
 > system generated on its own has no bearing on the answer.
 
 Pull line:
-> That sets a hard release line. Anything that sends its users away diminished
-> is something we do not put out.
-
-### Structure — Built as one company, across successive products.
-
-Lead: NOVARC is deliberately one company rather than a family of spin-offs. Everything it makes is made in the same place, and each product is built on top of what the ones before it established.
-
-- **A single company** — One legal entity, one name, one bar for anything that ships. Ideas are not spun out into ventures of their own.
-- **A sequence of products** — The one in validation now is the first, not the full set. Models, agents, and further tools are meant to follow, all measured against the same six outcomes.
-- **Gains that carry forward** — Because it all stays in one place, it adds up — findings, hard-won craft, earned credibility. Each product starts from the position the last one reached.
+> Anything that sends its users away diminished is something we do not put
+> out.
 
 ### The standard — Six outcomes we hold every product to
 
@@ -418,32 +410,6 @@ Intro: "Augmentation" means little until you say how you would know it happened.
 4. **Enhance structured thinking** — Large problems split into parts that fit back together.
 5. **Enable deeper problem-solving** — Traction on questions that were previously out of reach.
 6. **Increase the rate of original discovery** — More conclusions that were not already contained in the prompt.
-
-### Questions, answered (FAQ)
-
-**Who is behind NOVARC, and what was the starting observation?**
-Pavel Abdulin founded it in 2026, in Zürich. The starting observation was that the commercial mainstream in AI keeps moving toward systems that take on more and more of the user's thinking, while the decade-scale cost of that shift goes mostly unexamined. The company exists to examine it and to build the other way.
-
-**What sets NOVARC apart from the rest of the field?**
-Most of the field works on the system: better output, delivered quicker, needing less from the user with each version. NOVARC works on the user instead. Success is measured by what someone can still do without the tool in hand, weeks after a session — not by anything the tool generated during it. That measure governs both the research agenda and the product roadmap.
-
-**What is NOVARC building, in concrete terms?**
-Models, agents, and finished products, all under the single conviction the company was founded on. The cognitive-augmentation work is where it starts, not where it stops: the first piece is an instrument that reports how well your reasoning is holding up. What is in development now is that instrument; anything later gets described once it is real, and not before.
-
-**When does the first product open to users?**
-It is in testing now and due to reach people in 2026, with no public name attached until then. Pricing and access terms go out ahead of that date, and the waitlist is told before everyone else.
-
-**Is NOVARC a lab or a business?**
-Both, and not as separate departments. NOVARC runs its own inquiry into how people think and how machine intelligence behaves, and it ships products built on what that inquiry turns up. Selling the products pays for the inquiry; the inquiry decides which products are worth building, and when. Neither is a hobby bolted onto the other.
-
-**Is NOVARC attached to a university?**
-No — it is an independent company. The work builds on published results from groups at MIT, Carnegie Mellon, ETH Zürich, and elsewhere, but carries no formal tie to any institution.
-
-**Where does NOVARC post its updates?**
-Research notes, product news, and company updates are posted publicly on LinkedIn as they happen. Anything about the first product goes to the waitlist before it appears there.
-
-**Against what is augmentation actually measured?**
-Against the six outcomes above, and in time against readings from the instrument itself. The claim is built to resolve to numbers: whether a person's unaided reasoning, recall, and structured thinking hold their level or improve across months of use. If those figures move the wrong way, the product has failed the standard it set for itself.
 
 ### Zürich-based, not Zürich-bound.
 
@@ -467,7 +433,7 @@ Page metadata description: The evidence base for NOVARC's position: two anchor s
 ### Hero
 
 - Eyebrow: Research
-- Headline: Build a tool to spare people effort and it tends to take the *thinking* with it. That effect has now been measured.
+- Headline: Build a tool to spare people effort and it tends to take the *thinking* with it. Two independent research teams — not us — have now measured that effect.
 - Sub: The result shows up across teams that share no method and no dataset. Hand more of your reasoning to the tool, and your own capacity for it thins out. What follows is the two studies the case rests on, the cognitive science that explains them, and the test we accept for our own work.
 - Primary CTA: Join the waitlist (→ `/#waitlist`)
 - Secondary CTA: See the instrument (→ `/product`)

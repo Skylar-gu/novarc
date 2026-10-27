@@ -35,7 +35,7 @@ const BARS: Bar[] = [
 
 const VIEW_W = 640;
 const VIEW_H = 400;
-const PLOT = { top: 28, right: 20, bottom: 84, left: 52 };
+const PLOT = { top: 28, right: 20, bottom: 84, left: 60 };
 const PLOT_W = VIEW_W - PLOT.left - PLOT.right;
 const PLOT_H = VIEW_H - PLOT.top - PLOT.bottom;
 const BAR_W = 56;
@@ -101,15 +101,16 @@ export function RecallFailureChart({ className }: RecallFailureChartProps) {
             shown to convey the reported direction rather than exact rates.
           </desc>
 
-          {/* Values are approximate — the "~" on each bar and this note say so. */}
+          {/* Y-axis title: what the percentage is a share of. */}
           <text
-            x={PLOT.left - 10}
-            y={PLOT.top - 12}
-            textAnchor="end"
+            transform={`rotate(-90 16 ${PLOT.top + PLOT_H / 2})`}
+            x={16}
+            y={PLOT.top + PLOT_H / 2}
+            textAnchor="middle"
             fill="var(--text-muted)"
-            fontSize={11}
+            fontSize={12}
           >
-            approx.
+            Could not quote their own sentence
           </text>
 
           {/* Gridlines and y-axis ticks */}

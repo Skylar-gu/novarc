@@ -4,10 +4,15 @@
  *
  * `handleScoreRequest` takes an already-parsed request body and returns a
  * status plus a JSON-serialisable payload. It runs the input guards, then
- * scores the transcript: with the LLM judge when a key is present (falling back
+ * scores the transcript: with an LLM judge when a key is present (falling back
  * to the heuristic engine if the judge is unavailable), or with the heuristic
  * engine directly when there is no key. Validation runs on both paths inside
  * `scoreTranscript`, so a fabricated receipt is stripped regardless of engine.
+ *
+ * Two judge backends share the same `Judge` contract: `OPENROUTER_API_KEY`
+ * selects the cheaper OpenRouter judge (`openrouterJudge.ts`); otherwise
+ * `ANTHROPIC_API_KEY` selects the Claude judge (`judge.ts`). Neither is a hard
+ * dependency — either one's absence or failure falls back to the heuristic.
  *
  * Nothing here persists anything, and the transcript is never echoed back.
  */
@@ -18,6 +23,7 @@ import {
   JudgeUnavailableError,
   makeLlmJudge,
 } from "../../../../lib/instrument/judge.ts";
+import { makeOpenRouterJudge } from "../../../../lib/instrument/openrouterJudge.ts";
 
 /** Total characters of transcript text accepted in one request. */
 export const MAX_TRANSCRIPT_CHARS = 60_000;
@@ -38,7 +44,7 @@ export interface CoreResult {
 
 /** Injection points for tests. Production supplies neither. */
 export interface ScoreDeps {
-  /** Overrides `process.env.ANTHROPIC_API_KEY` presence. */
+  /** Overrides whether `OPENROUTER_API_KEY` or `ANTHROPIC_API_KEY` is present. */
   apiKeyPresent?: boolean;
   /** Overrides the real LLM judge factory. */
   makeJudge?: () => Judge;
@@ -116,8 +122,12 @@ export async function handleScoreRequest(
   const { now } = deps;
 
   const apiKeyPresent =
-    deps.apiKeyPresent ?? Boolean(process.env.ANTHROPIC_API_KEY);
-  const makeJudge = deps.makeJudge ?? (() => makeLlmJudge());
+    deps.apiKeyPresent ??
+    Boolean(process.env.OPENROUTER_API_KEY || process.env.ANTHROPIC_API_KEY);
+  const makeJudge =
+    deps.makeJudge ??
+    (() =>
+      process.env.OPENROUTER_API_KEY ? makeOpenRouterJudge() : makeLlmJudge());
 
   try {
     let result: ScoreResult;

@@ -50,8 +50,10 @@ Drift**.
   instrument). Paste one ChatGPT / Claude / Gemini transcript and it reads your half of
   it: Load, Rigor, and the passages from your own messages behind each score, with most
   sessions left unscored. A deterministic rubric engine runs by default; set
-  `ANTHROPIC_API_KEY` (and optionally `INSTRUMENT_MODEL`, default `claude-opus-5`) to
-  enable the language-model judge. See `docs/INSTRUMENT_PROTOTYPE.md`.
+  `OPENROUTER_API_KEY` (cheaper; default model `google/gemini-2.5-flash`) or
+  `ANTHROPIC_API_KEY` (default `claude-opus-5`) — plus optionally
+  `INSTRUMENT_MODEL` to override either one's model — to enable a language-model
+  judge. See `docs/INSTRUMENT_PROTOTYPE.md`.
 - [x] Validation harness seed — `npm run validate` scores a fixed 18-transcript
   set (`validation/set.md`) against reference labels and checks the heuristic
   engine is byte-stable. Independent human-rater agreement and the LLM-judge

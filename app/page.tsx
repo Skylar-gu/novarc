@@ -9,9 +9,7 @@ import { PhaseCard } from "@/components/blocks/PhaseCard";
 import { PrincipleGrid, PrincipleCard } from "@/components/blocks/PrincipleGrid";
 import { StatCard } from "@/components/blocks/StatCard";
 import { InterfacePreview } from "@/components/blocks/InterfacePreview";
-import { HouseSection } from "@/components/blocks/HouseSection";
 import { ScrollReveal } from "@/components/blocks/ScrollReveal";
-import { WaitlistForm } from "@/components/blocks/WaitlistForm";
 import { InstrumentTeaser } from "@/components/home/InstrumentTeaser";
 import { RecallFailureChart } from "@/components/charts/RecallFailureChart";
 import { TrustEffortChart } from "@/components/charts/TrustEffortChart";
@@ -256,45 +254,6 @@ export default function HomePage() {
         <SectionLink href="/research">See the evidence</SectionLink>
       </Section>
 
-      {/* 10 — The house */}
-      <Section eyebrow="Structure" title="Kept under one roof">
-        <ScrollReveal>
-          <HouseSection
-            lead="Everything NOVARC makes is made in the same place: one company, one name, a run of products across the years rather than a scatter of separate ventures."
-            points={[
-              {
-                title: "A single company",
-                body: "One legal entity, one bar for what ships. Anything worth doing is done inside the company, not spun out on its own.",
-              },
-              {
-                title: "A sequence of products",
-                body: "The instrument being validated now is the first of them, not the last. Models and agents are meant to follow, each answering to the same test.",
-              },
-              {
-                title: "Gains that carry forward",
-                body: "Findings, craft, and trust gather in one place, so each new product starts further along than a company beginning from zero would.",
-              },
-            ]}
-          />
-        </ScrollReveal>
-        <SectionLink href="/about">More on the house</SectionLink>
-      </Section>
-
-      {/* 11 — Closing */}
-      <Section title="Join the waitlist" titleClassName="sr-only">
-        <p className="max-w-3xl font-serif text-3xl font-medium leading-[1.15] tracking-tight text-text sm:text-4xl">
-          The aim is plain to say and hard to keep: you should come away from the
-          tools we build reasoning better than when you picked them up.
-        </p>
-        <p className="mt-6 max-w-xl text-lg leading-relaxed text-text-muted">
-          The first instrument enters its validation program in 2026. The
-          waitlist is told first, and we only write when there is something real
-          to show.
-        </p>
-        <div className="mt-9">
-          <WaitlistForm id="waitlist" variant="inline" />
-        </div>
-      </Section>
     </>
   );
 }

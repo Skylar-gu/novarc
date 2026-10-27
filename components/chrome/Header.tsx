@@ -37,9 +37,6 @@ export function Header() {
           className="flex shrink-0 items-center gap-3"
         >
           <Wordmark />
-          <span className="hidden text-xs text-text-muted sm:inline">
-            {site.location}
-          </span>
         </Link>
 
         <nav

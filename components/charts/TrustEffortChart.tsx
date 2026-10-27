@@ -45,6 +45,9 @@ export function TrustEffortChart({ className }: TrustEffortChartProps) {
         className,
       )}
     >
+      <h3 className="font-sans text-sm font-medium text-text">
+        Confidence in the AI vs. confidence in one&rsquo;s own judgment
+      </h3>
       <div className="overflow-x-auto">
         <svg
           viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}

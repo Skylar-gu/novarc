@@ -4,7 +4,6 @@ import { Hero } from "@/components/blocks/Hero";
 import { InterfacePreview } from "@/components/blocks/InterfacePreview";
 import { ScrollReveal } from "@/components/blocks/ScrollReveal";
 import { SignalCard } from "@/components/blocks/SignalCard";
-import { WaitlistForm } from "@/components/blocks/WaitlistForm";
 import { Section } from "@/components/ui/Section";
 import { LinkButton } from "@/components/ui/Button";
 import { site, ogImage } from "@/lib/site";
@@ -237,15 +236,6 @@ export default function ProductPage() {
         <div className="mt-8">
           <LinkButton href="/instrument">Open the prototype</LinkButton>
         </div>
-      </Section>
-
-      <Section title="Join the waitlist">
-        <p className="mb-8 max-w-2xl text-lg leading-relaxed text-text-muted">
-          Measurement comes first for a reason: every NOVARC build after it
-          rests on a claim about human capability, and a claim like that should
-          not be taken on faith when it can be instrumented instead.
-        </p>
-        <WaitlistForm variant="inline" />
       </Section>
     </>
   );

@@ -53,16 +53,9 @@ export default function InstrumentPage() {
               behind it, and most sessions come back unscored.
             </p>
             <p>
-              This is a prototype, not the validated instrument. Its scores have
-              not been checked against trained human raters, and it should be
-              read as a demonstration of the method rather than a measurement to
-              rely on.
-            </p>
-            <p>
               Your transcript is sent once to the scoring route and is not
               stored on a server. The scores it returns are kept only in this
-              browser, under your control, and you can export or delete them at
-              any time.
+              browser.
             </p>
           </div>
         </Container>

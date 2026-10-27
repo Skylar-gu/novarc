@@ -8,8 +8,6 @@ export const site = {
   name: "NOVARC",
   /** Footer descriptor line. */
   descriptor: "Engineering intelligence",
-  /** Header lockup sub-line and footer location line. */
-  location: "Zürich · Founded 2026",
   /**
    * Base URL for metadata (`metadataBase`, canonical + OpenGraph URLs).
    * TODO(WP-7): points at the live novarc.tech origin. Confirm the actual
@@ -65,9 +63,6 @@ export const exploreItems: NavItem[] = [
 
 /** Waitlist / updates copy. Original wording, austere register. */
 export const waitlist = {
-  /** Top ribbon message. */
-  ribbon: "NOVARC's first instrument is due in 2026.",
-  ribbonAction: "Join the waitlist",
   /** Short header CTA. */
   cta: "Get updates",
   /** Long-form CTA used in section footers. */
@@ -94,5 +89,4 @@ export const externalLinks = {
 /** localStorage keys, namespaced so the whole set is easy to find. */
 export const storageKeys = {
   theme: "novarc:theme",
-  ribbonDismissed: "novarc:ribbon-dismissed",
 } as const;
