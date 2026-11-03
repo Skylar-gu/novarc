@@ -24,6 +24,8 @@ export interface HeroProps {
   headline: string | ReactNode;
   /** Supporting sentence rendered under the headline. */
   sub: string;
+  /** Short plain-text note rendered directly above the CTA row, e.g. a date. */
+  note?: string;
   /** Primary call to action, rendered as the solid button. */
   primaryCta: HeroCta;
   /** Optional secondary call to action, rendered as the quieter button. */
@@ -131,6 +133,7 @@ export function Hero({
   eyebrow,
   headline,
   sub,
+  note,
   primaryCta,
   secondaryCta,
   className,
@@ -165,13 +168,16 @@ export function Hero({
         <p className="mt-6 max-w-2xl text-lg leading-relaxed text-text-muted">
           {sub}
         </p>
-        <div className="mt-9 flex flex-wrap items-center gap-3">
-          <LinkButton href={primaryCta.href}>{primaryCta.label}</LinkButton>
-          {secondaryCta ? (
-            <LinkButton href={secondaryCta.href} variant="secondary">
-              {secondaryCta.label}
-            </LinkButton>
-          ) : null}
+        <div className="mt-9 flex flex-col gap-3">
+          {note ? <p className="text-sm text-text-muted">{note}</p> : null}
+          <div className="flex flex-wrap items-center gap-3">
+            <LinkButton href={primaryCta.href}>{primaryCta.label}</LinkButton>
+            {secondaryCta ? (
+              <LinkButton href={secondaryCta.href} variant="secondary">
+                {secondaryCta.label}
+              </LinkButton>
+            ) : null}
+          </div>
         </div>
       </Container>
     </section>

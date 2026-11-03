@@ -12,6 +12,8 @@ import {
 import { DriftTrend } from "@/components/instrument/DriftTrend";
 import { SessionHistory } from "@/components/instrument/SessionHistory";
 import { EngineModeBadge } from "@/components/instrument/EngineModeBadge";
+import { ContributeCard } from "@/components/instrument/ContributeCard";
+import { AggregatePanel } from "@/components/instrument/AggregatePanel";
 import { Button } from "@/components/ui/Button";
 import {
   NETWORK_ERROR,
@@ -240,6 +242,13 @@ export function InstrumentApp() {
                 }
               />
 
+              {phase.result.scored ? (
+                <ContributeCard
+                  load={phase.result.load?.value ?? null}
+                  rigor={phase.result.rigor?.value ?? null}
+                />
+              ) : null}
+
               <div>
                 <Button type="button" onClick={reset}>
                   Score another session
@@ -256,6 +265,10 @@ export function InstrumentApp() {
 
       <Section title="Recorded sessions">
         <SessionHistory record={record} />
+      </Section>
+
+      <Section title="Public aggregate" eyebrow="Opt-in">
+        <AggregatePanel />
       </Section>
     </>
   );

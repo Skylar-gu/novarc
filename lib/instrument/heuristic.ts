@@ -99,7 +99,10 @@ const GATE_MIN_USER_TURNS = 2;
 const GATE_MIN_USER_TOKENS = 40;
 const LOOKUP_MAX_TURN_TOKENS = 13; // per-turn mean below which turns look like lookups
 const LOOKUP_MAX_USER_TOKENS = 90; // total above which it is no longer "a lookup"
-const INTERVENTION_THRESHOLD = 0.4;
+// Exported so other surfaces reading live signal state (e.g. the browser
+// extension's widget, PHASE3_SPEC.md P3-3b) key off the same number instead
+// of inventing their own.
+export const INTERVENTION_THRESHOLD = 0.4;
 const QUOTE_MAX_CHARS = 200;
 
 /* -------------------------------------------------------------------------- */

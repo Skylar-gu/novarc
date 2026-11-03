@@ -3,14 +3,13 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { Section } from "@/components/ui/Section";
 import { Hero } from "@/components/blocks/Hero";
-import { PrincipleStatement } from "@/components/blocks/PrincipleStatement";
 import { SignalCard } from "@/components/blocks/SignalCard";
 import { PhaseCard } from "@/components/blocks/PhaseCard";
 import { PrincipleGrid, PrincipleCard } from "@/components/blocks/PrincipleGrid";
 import { StatCard } from "@/components/blocks/StatCard";
 import { InterfacePreview } from "@/components/blocks/InterfacePreview";
 import { ScrollReveal } from "@/components/blocks/ScrollReveal";
-import { InstrumentTeaser } from "@/components/home/InstrumentTeaser";
+import { LinkButton } from "@/components/ui/Button";
 import { RecallFailureChart } from "@/components/charts/RecallFailureChart";
 import { TrustEffortChart } from "@/components/charts/TrustEffortChart";
 import { site, ogImage, waitlist } from "@/lib/site";
@@ -61,32 +60,12 @@ export default function HomePage() {
           </>
         }
         sub="We make models, agents, and tools built to a single rule: each time you use one, you should be more capable afterward than you were before."
+        note="Launching 2026"
         primaryCta={{ label: waitlist.ctaLong, href: "#waitlist" }}
         secondaryCta={{ label: "See the instrument", href: "/product" }}
       />
 
-      {/* 2 — Principle 01 teaser */}
-      <Section title="The founding principle" titleClassName="sr-only">
-        <PrincipleStatement index={1}>
-          A tool earns its place only if removing it leaves the person more able
-          than they started. If it instead leaves them leaning on it to do what
-          they once managed alone, it was the wrong tool.
-        </PrincipleStatement>
-        <SectionLink href="/about">How we hold to this</SectionLink>
-      </Section>
-
-      {/* 3 — First instrument teaser */}
-      <Section title="The first instrument" titleClassName="sr-only">
-        <InstrumentTeaser
-          eyebrow="Arriving 2026"
-          cta={{ label: "What it looks at", href: "/product" }}
-        >
-          The first instrument is now in its validation program, and reaches
-          people during 2026.
-        </InstrumentTeaser>
-      </Section>
-
-      {/* 4 — Convenience vs. capability */}
+      {/* 2 — Convenience vs. capability */}
       <Section eyebrow="The argument" title="Built for capability, not convenience.">
         <div className="flex max-w-2xl flex-col gap-5 text-lg leading-relaxed text-text-muted">
           <p>
@@ -104,9 +83,10 @@ export default function HomePage() {
             one, so we built it first.
           </p>
         </div>
+        <SectionLink href="/about">The full argument</SectionLink>
       </Section>
 
-      {/* 5 — The instrument, explained */}
+      {/* 3 — The instrument, explained */}
       <Section eyebrow="The instrument" title="One instrument, three readings">
         <p className="max-w-2xl text-lg leading-relaxed text-text-muted">
           It runs inside ChatGPT, Claude, and Gemini. It does not grade the
@@ -122,47 +102,31 @@ export default function HomePage() {
         <SectionLink href="/product">How the reading works</SectionLink>
       </Section>
 
-      {/* 6 — Three signals */}
+      {/* 4 — Three signals */}
       <Section eyebrow="Signals" title="What it reads: Load, Rigor, Drift">
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
-          <SignalCard
-            index={1}
-            name="Load"
-            gloss="the share of the thinking you carried"
-          >
-            It comes down to who was doing the cognitive work: did you set up
-            the question or inherit it, work the reasoning or receive it,
-            stress-test the result or take it on trust, own the call or ratify
-            one. Transcript length is not a factor &mdash; a long answer you
-            lightly edited reads low, a short exchange you steered reads high.
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+          <SignalCard index={1} name="Load" gloss="the share of the thinking you carried">
+            Who was doing the cognitive work — not how long the transcript ran.
           </SignalCard>
           <SignalCard
             index={2}
             name="Rigor"
             gloss="the quality of your reasoning where you engaged"
           >
-            Where you did engage, how well did the reasoning hold up? It looks
-            for an assumption you named rather than smuggled in, a claim you
-            asked for support on, an objection you took on instead of
-            deflecting, a view you let the evidence move. It applies only where
-            there was reasoning to assess; a quick lookup is passed over.
+            How well that reasoning held up, only where there was reasoning to judge.
           </SignalCard>
           <SignalCard
             index={3}
             name="Drift"
             gloss="the direction of your reasoning over time"
           >
-            It waits until it has enough of a baseline to compare against, then
-            tracks movement only relative to your own past readings &mdash; no
-            population percentile enters into it. Any session the instrument
-            coached is dropped from the calculation, so the trend cannot
-            reflect its own nudging.
+            Movement against your own baseline, never a population curve.
           </SignalCard>
         </div>
         <SectionLink href="/product">Each signal, in full</SectionLink>
       </Section>
 
-      {/* 7 — Where this goes */}
+      {/* 5 — Where this goes */}
       <Section eyebrow="Roadmap" title="What comes after measurement">
         <ScrollReveal className="grid grid-cols-1 gap-6 md:grid-cols-3">
           <PhaseCard index={1} title="Instruments" state="In validation">
@@ -190,7 +154,7 @@ export default function HomePage() {
         <SectionLink href="/product">The full roadmap</SectionLink>
       </Section>
 
-      {/* 8 — Four principles */}
+      {/* 6 — Four principles */}
       <Section eyebrow="Principles" title="Four principles">
         <ScrollReveal>
           <PrincipleGrid>
@@ -217,7 +181,7 @@ export default function HomePage() {
         </ScrollReveal>
       </Section>
 
-      {/* 9 — Research stat cards + chart slots */}
+      {/* 7 — Research stat cards + chart slots */}
       <Section eyebrow="Evidence" title="The trade shows up in the data">
         <ScrollReveal>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -252,6 +216,20 @@ export default function HomePage() {
           </div>
         </ScrollReveal>
         <SectionLink href="/research">See the evidence</SectionLink>
+      </Section>
+
+      {/* 8 — Closing CTA */}
+      <Section eyebrow="Try it" title="See how it works">
+        <div className="flex max-w-2xl flex-col gap-5 text-lg leading-relaxed text-text-muted">
+          <p>
+            The validated version is still in testing, but a working prototype
+            of the reading is already live. Give it one conversation you have
+            had with ChatGPT, Claude, or Gemini and see what it finds.
+          </p>
+        </div>
+        <div className="mt-8">
+          <LinkButton href="/instrument">Try the prototype</LinkButton>
+        </div>
       </Section>
 
     </>
